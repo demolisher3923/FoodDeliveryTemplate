@@ -1,0 +1,35 @@
+<section class="login-page">
+    <div class="login-overlay">
+        <mat-card class="auth-card">
+            <h2>Login</h2>
+            <form [formGroup]="form" (ngSubmit)="submit()">
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput type="email" formControlName="email" />
+                    @if (form.controls.email.touched && form.controls.email.invalid) {
+                    <mat-error>Email is required and must be valid.</mat-error>
+                    }
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
+                    <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword"
+                        [attr.aria-label]="'Toggle password visibility'">
+                        <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                    </button>
+                    @if(form.controls.password.touched && form.controls.password.invalid){
+                    <mat-error>Password is required</mat-error>
+                    }
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
+                    {{ loading ? 'Signing in...' : 'Login' }}
+                </button>
+
+            </form>
+            <p>
+                New User ? <a routerLink="/register"> Create account</a>
+            </p>
+        </mat-card>
+    </div>
+</section>

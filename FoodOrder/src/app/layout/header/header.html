@@ -1,0 +1,30 @@
+<mat-toolbar class="header">
+  <a class="brand" routerLink="/">FoodNest</a>
+
+  <div class="spacer"></div>
+
+  @if (!isLoggedIn()) {
+    <a mat-button routerLink="/menu">Menu</a>
+    <a mat-button routerLink="/login">Login</a>
+    <a mat-raised-button color="primary" routerLink="/register">Register</a>
+  } @else {
+    @if (isAdmin()) {
+      <button mat-button (click)="goToDashboard()">Dashboard</button>
+    }
+    <a mat-button routerLink="/menu">Browse Menu</a>
+    @if (isAdmin()) {
+      <a mat-button routerLink="/admin/dashboard">Admin Dashboard</a>
+    }
+    @if (isUser()) {
+      <button class="profile-chip" type="button" routerLink="/profile">
+        @if (profileImageUrl) {
+          <img [src]="profileImageUrl" class="avatar" alt="Profile image" />
+        } @else {
+          <mat-icon>account_circle</mat-icon>
+        }
+        <span>{{ currentUser()?.fullName }}</span>
+      </button>
+    }
+    <button mat-raised-button color="warn" (click)="logout()">Logout</button>
+  }
+</mat-toolbar>

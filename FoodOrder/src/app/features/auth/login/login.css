@@ -1,0 +1,33 @@
+.login-page {
+  min-height: calc(100vh - 72px);
+  background-color: #0f1a2b;
+  background-image:
+    linear-gradient(rgba(8, 16, 32, 0.52), rgba(8, 16, 32, 0.52)),
+    url('../../../../assets/images/pexels-fadli-octora-channel-2157935346-37090679.jpg'),
+    url('/assets/images/pexels-fadli-octora-channel-2157935346-37090679.jpg');
+  background-size: cover, cover, cover;
+  background-position: center, center, center;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.login-overlay {
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.auth-card {
+  max-width: 420px;
+  width: 100%;
+  margin: 0;
+  padding: 1rem;
+  backdrop-filter: blur(3px);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}

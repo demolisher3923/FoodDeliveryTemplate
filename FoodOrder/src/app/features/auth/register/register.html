@@ -1,0 +1,107 @@
+<mat-card class="register-card">
+    <h2>Create Account</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="grid">
+            <mat-form-field appearance="outline">
+                <mat-label>Full Name</mat-label>
+                <input matInput formControlName="fullName" />
+                @if(form.controls.fullName.touched && form.controls.fullName.invalid){
+                <mat-error>Full name is required.</mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" />
+                @if(form.controls.email.touched && form.controls.email.invalid){
+                <mat-error>Enter valid email.</mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
+                <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword"
+                    [attr.aria-label]="'Toggle password visibility'">
+                    <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                @if (form.controls.password.touched && form.controls.password.invalid) {
+                <mat-error>
+                    Password must contain atleast one uppercase, lowercase, number, special character and must be of
+                    minimum 8 character.
+                </mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Confirm Password</mat-label>
+                <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" />
+                <button mat-icon-button matSuffix type="button" (click)="hideConfirmPassword = !hideConfirmPassword"
+                    [attr.aria-label]="'Toggle confirm password visibility'">
+                    <mat-icon>{{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                @if(form.controls.confirmPassword.touched && (form.controls.confirmPassword.invalid ||
+                passwordMismatch)){
+                <mat-error>
+                    Confirm password is required and must match with password.
+                </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Mobile Number</mat-label>
+                <input matInput formControlName="mobileNumber" />
+                @if(form.controls.mobileNumber.touched && form.controls.mobileNumber.invalid){
+                <mat-error> Enter valid mobile number </mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Gender</mat-label>
+                <mat-select formControlName="gender">
+                    <mat-option value="Male">Male</mat-option>
+                    <mat-option value="Female">Female</mat-option>
+                    <mat-option value="Other">Other</mat-option>
+                </mat-select>
+                @if(form.controls.gender.touched && form.controls.gender.invalid){
+                <mat-error>Select gender</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Address</mat-label>
+            <textarea matInput row="2" formControlName="address"></textarea>
+            @if(form.controls.address.touched && form.controls.address.invalid){
+            <mat-error>Address is required and atleast of 8 character</mat-error>
+            }
+        </mat-form-field>
+
+        <label class="label">Profile Image</label>
+        <input type="file" (change)="onProfileImageChange($event)" accept=".png,.jpg,.jpeg" />
+        @if (imageError) {
+        <p class="error">{{ imageError }}</p>
+        }
+        @if (profileImagePreview) {
+        <div class="preview-wrapper">
+            <img [src]="profileImagePreview" alt="Profile preview" class="profile-preview" />
+        </div>
+        }
+
+        <label class="label">Interests/Categories</label>
+        <div class="checkbox-grid" formArrayName="interests">
+            @for (interest of interstsList; track interest; let i = $index) {
+            <mat-checkbox [formControlName]="i">{{ interest }}</mat-checkbox>
+            }
+        </div>
+        @if (!hasSelectedInterest && form.touched) {
+        <p class="error">Please select at least one interest.</p>
+        }
+
+        <label class="label">Preferred Contact Method</label>
+        <mat-radio-group formControlName="preferredContactMethod" class="radio-group">
+            <mat-radio-button value="Email">Email</mat-radio-button>
+            <mat-radio-button value="Mobile">Mobile</mat-radio-button>
+            <mat-radio-button value="SMs">SMS</mat-radio-button>
+        </mat-radio-group>
+        <button mat-raised-button color="primary" type="submit"
+            [disabled]="form.invalid || passwordMismatch || !hasSelectedInterest || loading || !!imageError">
+            {{ loading ? 'Submitting...' : 'Register' }}
+        </button>
+    </form>
+</mat-card>

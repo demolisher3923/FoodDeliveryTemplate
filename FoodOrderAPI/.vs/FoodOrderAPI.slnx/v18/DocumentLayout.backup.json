@@ -1,0 +1,387 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{675AE089-024A-832A-097B-C670E360DC73}|FoodOrderAPI\\FoodOrderAPI.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\foodorderapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{675AE089-024A-832A-097B-C670E360DC73}|FoodOrderAPI\\FoodOrderAPI.csproj|solutionrelative:foodorderapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{675AE089-024A-832A-097B-C670E360DC73}|FoodOrderAPI\\FoodOrderAPI.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\foodorderapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{675AE089-024A-832A-097B-C670E360DC73}|FoodOrderAPI\\FoodOrderAPI.csproj|solutionrelative:foodorderapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\bussinesslayer\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|solutionrelative:bussinesslayer\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\bussinesslayer\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|solutionrelative:bussinesslayer\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\bussinesslayer\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|solutionrelative:bussinesslayer\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\dataaccesslayer\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{675AE089-024A-832A-097B-C670E360DC73}|FoodOrderAPI\\FoodOrderAPI.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\foodorderapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{675AE089-024A-832A-097B-C670E360DC73}|FoodOrderAPI\\FoodOrderAPI.csproj|solutionrelative:foodorderapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\dataaccesslayer\\repository\\repository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\repository\\repository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\dataaccesslayer\\interface\\irepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\interface\\irepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\dataaccesslayer\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{675AE089-024A-832A-097B-C670E360DC73}|FoodOrderAPI\\FoodOrderAPI.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\foodorderapi\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{675AE089-024A-832A-097B-C670E360DC73}|FoodOrderAPI\\FoodOrderAPI.csproj|solutionrelative:foodorderapi\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\dataaccesslayer\\interface\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\interface\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\bussinesslayer\\services\\jwttokengenrator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|solutionrelative:bussinesslayer\\services\\jwttokengenrator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\bussinesslayer\\services\\passwordhashservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|solutionrelative:bussinesslayer\\services\\passwordhashservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\dataaccesslayer\\repository\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\repository\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\bussinesslayer\\interface\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|solutionrelative:bussinesslayer\\interface\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\bussinesslayer\\interface\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|solutionrelative:bussinesslayer\\interface\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\bussinesslayer\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C68B7AA0-C3CC-2A33-D4C9-F1F6CF87E8AA}|BussinessLayer\\BussinessLayer.csproj|solutionrelative:bussinesslayer\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\dataaccesslayer\\dto\\auth\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\dto\\auth\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\dataaccesslayer\\dto\\auth\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\dto\\auth\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\dataaccesslayer\\common\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\common\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|d:\\ajayparmar\\training\\.net\\dotnet core\\foodorderapi\\dataaccesslayer\\dto\\auth\\authresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9FCCEB3-DD88-F8C0-89A3-FD31A7C54F23}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\dto\\auth\\authresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 9,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IRepository.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Interface\\IRepository.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\Interface\\IRepository.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Interface\\IRepository.cs",
+              "RelativeToolTip": "DataAccessLayer\\Interface\\IRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAsAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T08:34:33.857Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DependencyInjection.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\DependencyInjection.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\DependencyInjection.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\DependencyInjection.cs",
+              "RelativeToolTip": "DataAccessLayer\\DependencyInjection.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:33:59.193Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "BussinessLayer\\Services\\AuthService.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Services\\AuthService.cs",
+              "RelativeToolTip": "BussinessLayer\\Services\\AuthService.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAowBMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T11:02:51.543Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\FoodOrderAPI\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "FoodOrderAPI\\Controllers\\AuthController.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\FoodOrderAPI\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "FoodOrderAPI\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAQwCIAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:06:39.287Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DbSeeder.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\DbSeeder.cs",
+              "RelativeDocumentMoniker": "BussinessLayer\\DbSeeder.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\DbSeeder.cs",
+              "RelativeToolTip": "BussinessLayer\\DbSeeder.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAgwBEAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T12:08:23.802Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\FoodOrderAPI\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "FoodOrderAPI\\Controllers\\UserController.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\FoodOrderAPI\\Controllers\\UserController.cs",
+              "RelativeToolTip": "FoodOrderAPI\\Controllers\\UserController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T11:08:44.808Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "User.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Models\\User.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\Models\\User.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Models\\User.cs",
+              "RelativeToolTip": "DataAccessLayer\\Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T10:39:06.574Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\FoodOrderAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "FoodOrderAPI\\appsettings.json",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\FoodOrderAPI\\appsettings.json",
+              "RelativeToolTip": "FoodOrderAPI\\appsettings.json",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-14T13:52:35.809Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "DependencyInjection.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\DependencyInjection.cs",
+              "RelativeDocumentMoniker": "BussinessLayer\\DependencyInjection.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\DependencyInjection.cs",
+              "RelativeToolTip": "BussinessLayer\\DependencyInjection.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:23:53.111Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\FoodOrderAPI\\Program.cs",
+              "RelativeDocumentMoniker": "FoodOrderAPI\\Program.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\FoodOrderAPI\\Program.cs",
+              "RelativeToolTip": "FoodOrderAPI\\Program.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAgwEMAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T10:36:06.895Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Repository.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Repository\\Repository.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\Repository\\Repository.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Repository\\Repository.cs",
+              "RelativeToolTip": "DataAccessLayer\\Repository\\Repository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T11:07:58.834Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Interface\\IAuthService.cs",
+              "RelativeDocumentMoniker": "BussinessLayer\\Interface\\IAuthService.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Interface\\IAuthService.cs",
+              "RelativeToolTip": "BussinessLayer\\Interface\\IAuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAUwAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T11:02:40.183Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "IUserRepository.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Interface\\IUserRepository.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\Interface\\IUserRepository.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Interface\\IUserRepository.cs",
+              "RelativeToolTip": "DataAccessLayer\\Interface\\IUserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T11:39:25.974Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Repository\\UserRepository.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\Repository\\UserRepository.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Repository\\UserRepository.cs",
+              "RelativeToolTip": "DataAccessLayer\\Repository\\UserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T11:39:20.666Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "JwtTokenGenrator.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Services\\JwtTokenGenrator.cs",
+              "RelativeDocumentMoniker": "BussinessLayer\\Services\\JwtTokenGenrator.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Services\\JwtTokenGenrator.cs",
+              "RelativeToolTip": "BussinessLayer\\Services\\JwtTokenGenrator.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T12:07:53.395Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "PasswordHashService.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Services\\PasswordHashService.cs",
+              "RelativeDocumentMoniker": "BussinessLayer\\Services\\PasswordHashService.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Services\\PasswordHashService.cs",
+              "RelativeToolTip": "BussinessLayer\\Services\\PasswordHashService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T11:05:27.534Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "UserService.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Services\\UserService.cs",
+              "RelativeDocumentMoniker": "BussinessLayer\\Services\\UserService.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Services\\UserService.cs",
+              "RelativeToolTip": "BussinessLayer\\Services\\UserService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:30:32.134Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "IUserService.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Interface\\IUserService.cs",
+              "RelativeDocumentMoniker": "BussinessLayer\\Interface\\IUserService.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\BussinessLayer\\Interface\\IUserService.cs",
+              "RelativeToolTip": "BussinessLayer\\Interface\\IUserService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T10:52:36.404Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "RegisterRequest.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Dto\\Auth\\RegisterRequest.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\Dto\\Auth\\RegisterRequest.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Dto\\Auth\\RegisterRequest.cs",
+              "RelativeToolTip": "DataAccessLayer\\Dto\\Auth\\RegisterRequest.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAowBgAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T06:37:03.21Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "LoginRequest.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Dto\\Auth\\LoginRequest.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\Dto\\Auth\\LoginRequest.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Dto\\Auth\\LoginRequest.cs",
+              "RelativeToolTip": "DataAccessLayer\\Dto\\Auth\\LoginRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAoAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T06:34:14.182Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "BaseEntity.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Common\\BaseEntity.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\Common\\BaseEntity.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Common\\BaseEntity.cs",
+              "RelativeToolTip": "DataAccessLayer\\Common\\BaseEntity.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T05:57:02.432Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "AuthResponse.cs",
+              "DocumentMoniker": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Dto\\Auth\\AuthResponse.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\Dto\\Auth\\AuthResponse.cs",
+              "ToolTip": "D:\\AjayParmar\\Training\\.NET\\dotnet core\\FoodOrderAPI\\DataAccessLayer\\Dto\\Auth\\AuthResponse.cs",
+              "RelativeToolTip": "DataAccessLayer\\Dto\\Auth\\AuthResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T06:28:38.246Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

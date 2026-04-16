@@ -1,0 +1,9 @@
+:host {
+	display: block;
+	min-height: 100vh;
+	background: #f4f7fb;
+}
+
+.main-content {
+	min-height: calc(100vh - 120px);
+}

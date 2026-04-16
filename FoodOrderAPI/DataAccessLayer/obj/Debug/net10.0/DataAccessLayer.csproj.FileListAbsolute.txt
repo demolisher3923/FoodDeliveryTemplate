@@ -1,0 +1,28 @@
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/bin/Debug/net10.0/DataAccessLayer.deps.json
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/bin/Debug/net10.0/DataAccessLayer.runtimeconfig.json
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/bin/Debug/net10.0/DataAccessLayer.dll
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/bin/Debug/net10.0/DataAccessLayer.pdb
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.csproj.AssemblyReference.cache
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.AssemblyInfoInputs.cache
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.AssemblyInfo.cs
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.csproj.CoreCompileInputs.cache
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.dll
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/refint/DataAccessLayer.dll
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.pdb
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.genruntimeconfig.cache
+D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/ref/DataAccessLayer.dll
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/bin/Debug/net10.0/DataAccessLayer.deps.json
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/bin/Debug/net10.0/DataAccessLayer.runtimeconfig.json
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/bin/Debug/net10.0/DataAccessLayer.dll
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/bin/Debug/net10.0/DataAccessLayer.pdb
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.csproj.AssemblyReference.cache
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.AssemblyInfoInputs.cache
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.AssemblyInfo.cs
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.csproj.CoreCompileInputs.cache
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.dll
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/refint/DataAccessLayer.dll
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.pdb
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.genruntimeconfig.cache
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/ref/DataAccessLayer.dll

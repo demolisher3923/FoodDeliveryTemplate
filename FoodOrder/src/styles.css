@@ -1,0 +1,11 @@
+/* Toast styles */
+.mat-mdc-snack-bar-container.toast-error .mdc-snackbar__surface {
+	background-color: #b00020 !important;
+	color: #fff !important;
+}
+
+.mat-mdc-snack-bar-container.toast-success .mdc-snackbar__surface {
+	background-color: #1f7a33 !important;
+	color: #fff !important;
+}
+/* You can add global styles to this file, and also import other style files */

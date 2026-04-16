@@ -1,0 +1,149 @@
+<section class="admin-dashboard">
+	<div class="intro">
+		<h2>Admin Dashboard</h2>
+		<p>Track your restaurant performance and jump into key management tasks quickly.</p>
+	</div>
+
+	<div class="stats-grid">
+		@for (item of stats; track item.title) {
+			<mat-card class="stat-card">
+				<h3>{{ item.title }}</h3>
+				<div class="value-row">
+					<span class="value">{{ item.value }}</span>
+					<span class="delta">{{ item.delta }}</span>
+				</div>
+			</mat-card>
+		}
+	</div>
+
+	<div class="actions-grid">
+		<mat-card class="action-card">
+			<h3>Menu Management</h3>
+			<p>Add new items, update prices, and manage availability for your customers.</p>
+			<button mat-raised-button color="primary" routerLink="/menu">Go To Menu</button>
+		</mat-card>
+
+		<mat-card class="action-card">
+			<h3>User Oversight</h3>
+			<p>Review profile updates and monitor activity for a healthy platform.</p>
+			<button mat-stroked-button color="primary" (click)="loadUsers()">Refresh Users</button>
+		</mat-card>
+	</div>
+
+	<mat-card class="users-card">
+		<div class="users-header">
+			<h3>Users</h3>
+			<form [formGroup]="searchForm" class="search-row" (ngSubmit)="applySearch()">
+				<mat-form-field appearance="outline" class="search-field">
+					<mat-label>Search user</mat-label>
+					<input matInput formControlName="search" placeholder="name, email or mobile" />
+				</mat-form-field>
+				<button mat-raised-button color="primary" type="submit">Search</button>
+				<button mat-button type="button" (click)="clearSearch()">Clear</button>
+			</form>
+		</div>
+
+		@if (loadingUsers) {
+			<p>Loading users...</p>
+		} @else {
+			<div class="table-wrap">
+				<table class="users-table">
+					<thead>
+						<tr>
+							<th><button type="button" class="sort-btn" (click)="changeSort('fullName')">Full Name</button></th>
+							<th><button type="button" class="sort-btn" (click)="changeSort('email')">Email</button></th>
+							<th>Mobile</th>
+							<th><button type="button" class="sort-btn" (click)="changeSort('role')">Role</button></th>
+							<th>Status</th>
+							<th><button type="button" class="sort-btn" (click)="changeSort('createdAt')">Created</button></th>
+						</tr>
+					</thead>
+					<tbody>
+						@for (user of users; track user.userId) {
+							<tr>
+								<td>{{ user.fullName }}</td>
+								<td>{{ user.email }}</td>
+								<td>{{ user.mobileNumber }}</td>
+								<td>{{ user.role }}</td>
+								<td>{{ user.isActive ? 'Active' : 'Inactive' }}</td>
+								<td>{{ user.createdAt | date:'mediumDate' }}</td>
+							</tr>
+						}
+						@if (users.length === 0) {
+							<tr>
+								<td colspan="6" class="empty-row">No users found.</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="pagination-row">
+				<span>Showing page {{ pageNumber }} of {{ totalPages || 1 }} ({{ totalCount }} users)</span>
+				<div class="pager-actions">
+					@for (page of pageNumbers; track page) {
+						<button mat-stroked-button [class.active-page]="page === pageNumber" (click)="goToPage(page)">{{ page }}</button>
+					}
+				</div>
+			</div>
+		}
+	</mat-card>
+
+	<mat-card class="users-card">
+		<div class="users-header">
+			<h3>Orders</h3>
+			<button mat-stroked-button color="primary" (click)="loadOrders()">Refresh Orders</button>
+		</div>
+
+		@if (loadingOrders) {
+			<p>Loading orders...</p>
+		} @else {
+			<div class="table-wrap">
+				<table class="users-table">
+					<thead>
+						<tr>
+							<th>User</th>
+							<th>Email</th>
+							<th>Item</th>
+							<th>Qty</th>
+							<th>Total</th>
+							<th>Status</th>
+							<th>Update Status</th>
+							<th>Created</th>
+						</tr>
+					</thead>
+					<tbody>
+						@for (order of orders; track order.orderId) {
+							<tr>
+								<td>{{ order.userName }}</td>
+								<td>{{ order.userEmail }}</td>
+								<td>{{ order.menuItemName }}</td>
+								<td>{{ order.quantity }}</td>
+								<td>₹{{ order.totalPrice }}</td>
+								<td>{{ order.status }}</td>
+								<td>
+									<div class="status-editor">
+										<select [value]="orderStatusDrafts[order.orderId]" (change)="orderStatusDrafts[order.orderId] = $any($event.target).value">
+											@for (status of orderStatusOptions; track status) {
+												<option [value]="status">{{ status }}</option>
+											}
+										</select>
+										<button mat-button color="primary" type="button" [disabled]="updatingOrderId === order.orderId" (click)="updateOrderStatus(order)">
+											{{ updatingOrderId === order.orderId ? 'Saving...' : 'Save' }}
+										</button>
+									</div>
+								</td>
+								<td>{{ order.createdAt | date:'medium' }}</td>
+							</tr>
+						}
+						@if (orders.length === 0) {
+							<tr>
+								<td colspan="8" class="empty-row">No orders found.</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</mat-card>
+</section>

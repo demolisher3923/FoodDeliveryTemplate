@@ -1,0 +1,154 @@
+.menu-page {
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 24px;
+}
+
+.heading p {
+	color: #607080;
+	margin-top: 6px;
+}
+
+.admin-editor {
+	margin-bottom: 16px;
+	padding: 16px;
+}
+
+.editor-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(180px, 1fr));
+	gap: 10px;
+}
+
+.full-width {
+	grid-column: 1 / -1;
+}
+
+.editor-actions {
+	grid-column: 1 / -1;
+	display: flex;
+	gap: 10px;
+}
+
+.menu-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 12px;
+}
+
+.menu-card {
+	padding: 14px;
+}
+
+.dish-image {
+	width: 100%;
+	height: 130px;
+	object-fit: cover;
+	border-radius: 12px;
+	margin-bottom: 10px;
+}
+
+.description {
+	color: #59697a;
+	min-height: 42px;
+}
+
+.price {
+	font-weight: 700;
+	margin: 8px 0 4px;
+}
+
+.availability {
+	color: #1f7a33;
+	font-size: 0.9rem;
+	margin: 0 0 10px;
+}
+
+.availability.unavailable {
+	color: #b00020;
+}
+
+.order-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+.qty-counter {
+	display: inline-flex;
+	align-items: center;
+	border: 1px solid #ccd6e2;
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+.qty-btn {
+	border: none;
+	background: #f2f6fb;
+	width: 32px;
+	height: 32px;
+	font-size: 1rem;
+	cursor: pointer;
+}
+
+.qty-value {
+	min-width: 34px;
+	text-align: center;
+	font-weight: 600;
+}
+
+.orders-card {
+	margin-top: 16px;
+	padding: 14px;
+}
+
+.orders-list {
+	display: grid;
+	gap: 8px;
+}
+
+.order-item {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 8px 10px;
+	border: 1px solid #dbe4ed;
+	border-radius: 10px;
+}
+
+.cart-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.checkout-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: 8px;
+}
+
+.error {
+	color: #b00020;
+}
+
+.success {
+	color: #1e7b34;
+}
+
+@media (max-width: 760px) {
+	.editor-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.order-item {
+		flex-direction: column;
+	}
+
+	.checkout-row {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+	}
+}

@@ -1,0 +1,86 @@
+<section class="profile-page">
+	<mat-card class="profile-card">
+		<div class="card-header">
+			<h2>My Profile</h2>
+			<p>Keep your account details up to date for faster checkout and communication.</p>
+		</div>
+
+		@if (loading) {
+			<p>Loading profile...</p>
+		} @else {
+			<form [formGroup]="form" (ngSubmit)="submit()">
+				<div class="profile-top">
+					<div class="avatar-block">
+						@if (profileImagePreview) {
+							<img [src]="profileImagePreview" alt="Profile image" class="avatar-preview" />
+						} @else {
+							<div class="avatar-placeholder">No Image</div>
+						}
+						<input type="file" accept=".png,.jpg,.jpeg" (change)="onProfileImageChange($event)" />
+						@if (imageError) {
+							<p class="error">{{ imageError }}</p>
+						}
+					</div>
+
+					<div class="form-grid">
+						<mat-form-field appearance="outline">
+							<mat-label>Full Name</mat-label>
+							<input matInput formControlName="fullName" />
+						</mat-form-field>
+
+						<mat-form-field appearance="outline">
+							<mat-label>Mobile Number</mat-label>
+							<input matInput formControlName="mobileNumber" />
+						</mat-form-field>
+
+						<mat-form-field appearance="outline" class="full-width">
+							<mat-label>Address</mat-label>
+							<textarea matInput rows="2" formControlName="address"></textarea>
+						</mat-form-field>
+
+						<mat-form-field appearance="outline">
+							<mat-label>Gender</mat-label>
+							<mat-select formControlName="gender">
+								<mat-option value="Male">Male</mat-option>
+								<mat-option value="Female">Female</mat-option>
+								<mat-option value="Other">Other</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+				</div>
+
+				<div class="preferences">
+					<label class="section-label">Interests</label>
+					<div class="interests" formArrayName="interests">
+						@for (interest of interestsList; track interest; let i = $index) {
+							<mat-checkbox [formControlName]="i">{{ interest }}</mat-checkbox>
+						}
+					</div>
+					@if (!hasSelectedInterest && form.touched) {
+						<p class="error">Select at least one interest.</p>
+					}
+
+					<label class="section-label">Preferred Contact Method</label>
+					<mat-radio-group formControlName="preferredContactMethod" class="contact-methods">
+						<mat-radio-button value="Email">Email</mat-radio-button>
+						<mat-radio-button value="Mobile">Mobile</mat-radio-button>
+						<mat-radio-button value="SMS">SMS</mat-radio-button>
+					</mat-radio-group>
+				</div>
+
+				@if (errorMessage) {
+					<p class="error">{{ errorMessage }}</p>
+				}
+				@if (message) {
+					<p class="success">{{ message }}</p>
+				}
+
+				<div class="actions">
+					<button mat-raised-button color="primary" [disabled]="saving || form.invalid || !hasSelectedInterest">
+						{{ saving ? 'Saving...' : 'Save Changes' }}
+					</button>
+				</div>
+			</form>
+		}
+	</mat-card>
+</section>
