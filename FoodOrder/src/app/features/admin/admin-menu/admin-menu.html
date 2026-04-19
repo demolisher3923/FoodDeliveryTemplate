@@ -1,36 +1,49 @@
 <section class="admin-dashboard">
-	<div class="intro">
-		<h2>Admin Dashboard</h2>
-		<p>Track your restaurant performance and jump into key management tasks quickly.</p>
-	</div>
+		<div class="intro" id="dashboard-section">
+			<h2>Admin Dashboard</h2>
+			<p>Track your restaurant performance and jump into key management tasks quickly.</p>
+		</div>
 
-	<div class="stats-grid">
-		@for (item of stats; track item.title) {
+		<div class="stats-grid">
 			<mat-card class="stat-card">
-				<h3>{{ item.title }}</h3>
+				<h3>Today's Orders</h3>
 				<div class="value-row">
-					<span class="value">{{ item.value }}</span>
-					<span class="delta">{{ item.delta }}</span>
+					<span class="value">{{ todaysOrdersCount }}</span>
 				</div>
 			</mat-card>
-		}
-	</div>
 
-	<div class="actions-grid">
-		<mat-card class="action-card">
-			<h3>Menu Management</h3>
-			<p>Add new items, update prices, and manage availability for your customers.</p>
-			<button mat-raised-button color="primary" routerLink="/menu">Go To Menu</button>
-		</mat-card>
+			<mat-card class="stat-card">
+				<h3>Today's Revenue</h3>
+				<div class="value-row">
+					<span class="value">₹{{ todaysRevenue }}</span>
+				</div>
+			</mat-card>
 
-		<mat-card class="action-card">
-			<h3>User Oversight</h3>
-			<p>Review profile updates and monitor activity for a healthy platform.</p>
-			<button mat-stroked-button color="primary" (click)="loadUsers()">Refresh Users</button>
-		</mat-card>
-	</div>
+			<mat-card class="stat-card">
+				<h3>Active Users (Current Page)</h3>
+				<div class="value-row">
+					<span class="value">{{ activeUsersCount }}</span>
+				</div>
+			</mat-card>
+		</div>
 
-	<mat-card class="users-card">
+		<div class="charts-grid">
+			<mat-card class="chart-card">
+				<h3>Realtime KPI Chart</h3>
+				<div class="chart-wrap">
+					<canvas #kpiChart></canvas>
+				</div>
+			</mat-card>
+
+			<mat-card class="chart-card">
+				<h3>Orders by Status</h3>
+				<div class="chart-wrap">
+					<canvas #ordersChart></canvas>
+				</div>
+			</mat-card>
+		</div>
+
+	<mat-card class="users-card" id="users-section">
 		<div class="users-header">
 			<h3>Users</h3>
 			<form [formGroup]="searchForm" class="search-row" (ngSubmit)="applySearch()">
@@ -40,6 +53,14 @@
 				</mat-form-field>
 				<button mat-raised-button color="primary" type="submit">Search</button>
 				<button mat-button type="button" (click)="clearSearch()">Clear</button>
+				<label class="table-size">
+					<span>Page Size</span>
+					<select [value]="pageSize" (change)="onUsersPageSizeChange($any($event.target).value)">
+						@for (size of pageSizeOptions; track size) {
+							<option [value]="size">{{ size }}</option>
+						}
+					</select>
+				</label>
 			</form>
 		</div>
 
@@ -50,6 +71,7 @@
 				<table class="users-table">
 					<thead>
 						<tr>
+							<th>Sr No</th>
 							<th><button type="button" class="sort-btn" (click)="changeSort('fullName')">Full Name</button></th>
 							<th><button type="button" class="sort-btn" (click)="changeSort('email')">Email</button></th>
 							<th>Mobile</th>
@@ -59,8 +81,9 @@
 						</tr>
 					</thead>
 					<tbody>
-						@for (user of users; track user.userId) {
+						@for (user of users; track user.userId; let index = $index) {
 							<tr>
+								<td>{{ ((pageNumber - 1) * pageSize) + index + 1 }}</td>
 								<td>{{ user.fullName }}</td>
 								<td>{{ user.email }}</td>
 								<td>{{ user.mobileNumber }}</td>
@@ -71,7 +94,7 @@
 						}
 						@if (users.length === 0) {
 							<tr>
-								<td colspan="6" class="empty-row">No users found.</td>
+								<td colspan="7" class="empty-row">No users found.</td>
 							</tr>
 						}
 					</tbody>
@@ -89,10 +112,20 @@
 		}
 	</mat-card>
 
-	<mat-card class="users-card">
+	<mat-card class="users-card" id="orders-section">
 		<div class="users-header">
 			<h3>Orders</h3>
-			<button mat-stroked-button color="primary" (click)="loadOrders()">Refresh Orders</button>
+			<div class="orders-actions">
+				<label class="table-size">
+					<span>Page Size</span>
+					<select [value]="ordersPageSize" (change)="onOrdersPageSizeChange($any($event.target).value)">
+						@for (size of pageSizeOptions; track size) {
+							<option [value]="size">{{ size }}</option>
+						}
+					</select>
+				</label>
+				<button mat-stroked-button color="primary" (click)="loadOrders()">Refresh Orders</button>
+			</div>
 		</div>
 
 		@if (loadingOrders) {
@@ -102,6 +135,7 @@
 				<table class="users-table">
 					<thead>
 						<tr>
+							<th>Sr No</th>
 							<th>User</th>
 							<th>Email</th>
 							<th>Item</th>
@@ -113,17 +147,20 @@
 						</tr>
 					</thead>
 					<tbody>
-						@for (order of orders; track order.orderId) {
+						@for (order of pagedOrders; track order.orderId; let index = $index) {
 							<tr>
+								<td>{{ ((ordersPageNumber - 1) * ordersPageSize) + index + 1 }}</td>
 								<td>{{ order.userName }}</td>
 								<td>{{ order.userEmail }}</td>
 								<td>{{ order.menuItemName }}</td>
 								<td>{{ order.quantity }}</td>
 								<td>₹{{ order.totalPrice }}</td>
-								<td>{{ order.status }}</td>
+								<td>
+									<span [class]="getStatusChipClass(order.status)">{{ order.status }}</span>
+								</td>
 								<td>
 									<div class="status-editor">
-										<select [value]="orderStatusDrafts[order.orderId]" (change)="orderStatusDrafts[order.orderId] = $any($event.target).value">
+										<select [value]="orderStatusDrafts[order.orderId]" (change)="onStatusDraftChange(order.orderId, $any($event.target).value)">
 											@for (status of orderStatusOptions; track status) {
 												<option [value]="status">{{ status }}</option>
 											}
@@ -136,13 +173,22 @@
 								<td>{{ order.createdAt | date:'medium' }}</td>
 							</tr>
 						}
-						@if (orders.length === 0) {
+						@if (pagedOrders.length === 0) {
 							<tr>
-								<td colspan="8" class="empty-row">No orders found.</td>
+								<td colspan="9" class="empty-row">No orders found.</td>
 							</tr>
 						}
 					</tbody>
 				</table>
+			</div>
+
+			<div class="pagination-row">
+				<span>Showing page {{ ordersPageNumber }} of {{ ordersTotalPages || 1 }} ({{ orders.length }} orders)</span>
+				<div class="pager-actions">
+					@for (page of orderPageNumbers; track page) {
+						<button mat-stroked-button [class.active-page]="page === ordersPageNumber" (click)="goToOrdersPage(page)">{{ page }}</button>
+					}
+				</div>
 			</div>
 		}
 	</mat-card>

@@ -26,3 +26,4 @@ D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/DataAccessLayer/obj/Debug/n
 /Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.pdb
 /Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.genruntimeconfig.cache
 /Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/ref/DataAccessLayer.dll
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/DataAccessLayer/obj/Debug/net10.0/DataAccessLayer.sourcelink.json

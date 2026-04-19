@@ -50,7 +50,9 @@ namespace BussinessLayer
                     {
                         Name = "Paneer Tikka Wrap",
                         Description = "Grilled paneer wrap with mint mayo and fresh veggies.",
+                        Category = "Fast Food",
                         Price = 149,
+                        StockQuantity = 40,
                         IsAvailable = true,
                         CreatedBy = "Seed"
                     },
@@ -58,7 +60,9 @@ namespace BussinessLayer
                     {
                         Name = "Veg Hakka Noodles",
                         Description = "Wok tossed noodles with crunchy vegetables and soy glaze.",
+                        Category = "Chinese",
                         Price = 179,
+                        StockQuantity = 35,
                         IsAvailable = true,
                         CreatedBy = "Seed"
                     },
@@ -66,7 +70,9 @@ namespace BussinessLayer
                     {
                         Name = "Margherita Pizza",
                         Description = "Classic thin crust pizza with tomato basil and mozzarella.",
+                        Category = "Pizza",
                         Price = 249,
+                        StockQuantity = 25,
                         IsAvailable = true,
                         CreatedBy = "Seed"
                     });

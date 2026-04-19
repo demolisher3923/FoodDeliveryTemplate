@@ -1,9 +1,6 @@
 ﻿using DataAccessLayer.Interface;
 using DataAccessLayer.Repository;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DataAccessLayer
 {

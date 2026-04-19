@@ -1,5 +1,5 @@
 .menu-page {
-	max-width: 1100px;
+	max-width: 1200px;
 	margin: 0 auto;
 	padding: 24px;
 }
@@ -22,6 +22,25 @@
 
 .full-width {
 	grid-column: 1 / -1;
+}
+
+.upload-field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 10px;
+	border: 1px dashed #c6d2df;
+	border-radius: 12px;
+	background: #f8fbff;
+}
+
+.upload-title {
+	font-weight: 600;
+	color: #4d5f73;
+}
+
+.upload-input {
+	font-size: 0.9rem;
 }
 
 .editor-actions {
@@ -107,6 +126,32 @@
 	gap: 8px;
 }
 
+.orders-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+
+.my-orders-list {
+	display: grid;
+	gap: 10px;
+}
+
+.my-order-item {
+	padding: 10px;
+	border: 1px solid #dbe4ed;
+	border-radius: 10px;
+}
+
+.my-order-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
 .order-item {
 	display: flex;
 	justify-content: space-between;
@@ -129,8 +174,103 @@
 	padding-top: 8px;
 }
 
+.status-chip {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 10px;
+	border-radius: 999px;
+	font-size: 0.78rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+
+.status-chip.placed {
+	background: #e5edff;
+	color: #254aa5;
+}
+
+.status-chip.confirmed {
+	background: #dbf3ff;
+	color: #03658c;
+}
+
+.status-chip.preparing {
+	background: #fff1db;
+	color: #a56300;
+}
+
+.status-chip.out-for-delivery {
+	background: #ede5ff;
+	color: #5f3bb5;
+}
+
+.status-chip.delivered {
+	background: #dff6e5;
+	color: #1f7a33;
+}
+
+.status-chip.cancelled {
+	background: #ffe1e1;
+	color: #b00020;
+}
+
+.progress-row {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(100px, 1fr));
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.progress-step {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	color: #7a8997;
+}
+
+.progress-step .dot {
+	width: 12px;
+	height: 12px;
+	border-radius: 999px;
+	background: #c9d5e2;
+}
+
+.progress-step.completed {
+	color: #1f7a33;
+}
+
+.progress-step.completed .dot {
+	background: #1f7a33;
+}
+
+.progress-step.current {
+	font-weight: 700;
+	color: #1d4ed8;
+}
+
+.progress-step.current .dot {
+	background: #1d4ed8;
+}
+
+.step-label {
+	font-size: 0.76rem;
+	text-align: center;
+}
+
 .error {
 	color: #b00020;
+}
+
+.admin-preview {
+	margin-top: 8px;
+	width: 100%;
+	max-width: 260px;
+	height: 160px;
+	object-fit: cover;
+	border-radius: 10px;
+	border: 1px solid #dbe4ed;
 }
 
 .success {
@@ -150,5 +290,9 @@
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 8px;
+	}
+
+	.progress-row {
+		grid-template-columns: repeat(2, minmax(100px, 1fr));
 	}
 }

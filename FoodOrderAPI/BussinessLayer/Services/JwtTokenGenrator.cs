@@ -2,8 +2,6 @@
 using DataAccessLayer.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -20,19 +18,28 @@ namespace BussinessLayer.Services
         public string GenrateToken(User user, out DateTime expiresAt)
         {
             var key = _configuration["Jwt:Key"];
-            var issuer = _configuration["Jwt:Issuer"];
-            var audience = _configuration["Jwt:Audience"];
-            var expiryMinutes = int.TryParse(_configuration["Jwt:ExpiryMinutes"], out var value) ? value : 120;
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new InvalidOperationException("JWT key is missing in configuration.");
+            }
+
+            var issuer = _configuration["Jwt:Issuer"] ?? string.Empty;
+            var audience = _configuration["Jwt:Audience"] ?? string.Empty;
+
+            var expiryMinutes = 120;
+            var expiryText = _configuration["Jwt:ExpiryMinutes"];
+            if (!string.IsNullOrWhiteSpace(expiryText) && int.TryParse(expiryText, out var parsedMinutes))
+            {
+                expiryMinutes = parsedMinutes;
+            }
 
             expiresAt = DateTime.UtcNow.AddMinutes(expiryMinutes);
 
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.FullName),
-                new(ClaimTypes.Email, user.Email),
-                new(ClaimTypes.Role, user.Role.ToString())
-            };
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+            claims.Add(new Claim(ClaimTypes.Name, user.FullName));
+            claims.Add(new Claim(ClaimTypes.Email, user.Email));
+            claims.Add(new Claim(ClaimTypes.Role, user.Role));
 
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
@@ -45,8 +52,6 @@ namespace BussinessLayer.Services
             signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
     }
-
 }

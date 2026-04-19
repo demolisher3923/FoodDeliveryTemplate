@@ -1,0 +1,34 @@
+<mat-card class="menu-card">
+  @if (imageSrc) {
+    <img [src]="imageSrc" alt="{{ item.name }}" class="dish-image" />
+  }
+
+  <h3>{{ item.name }}</h3>
+  <p class="description">{{ item.description }}</p>
+  <p class="meta">Category: {{ item.category }}</p>
+  <p class="meta">Stock: {{ item.stockQuantity }}</p>
+  <p class="price">₹{{ item.price }}</p>
+  <p class="availability" [class.unavailable]="!item.isAvailable">
+    {{ item.isAvailable ? 'Available' : 'Out of Stock' }}
+  </p>
+
+  @if (isAdmin) {
+    <div class="admin-actions">
+      <button mat-stroked-button color="primary" (click)="edit.emit(item)">Edit</button>
+      <button mat-stroked-button color="warn" (click)="remove.emit(item)">Delete</button>
+    </div>
+  }
+
+  @if (isUser) {
+    <div class="order-row">
+      <div class="qty-counter">
+        <button type="button" class="qty-btn" (click)="decrement.emit(item.id)">-</button>
+        <span class="qty-value">{{ quantity }}</span>
+        <button type="button" class="qty-btn" (click)="increment.emit(item.id)">+</button>
+      </div>
+      <button mat-raised-button color="accent" [disabled]="!item.isAvailable || isAdding" (click)="addToCart.emit(item)">
+        {{ isAdding ? 'Adding...' : 'Add to cart' }}
+      </button>
+    </div>
+  }
+</mat-card>

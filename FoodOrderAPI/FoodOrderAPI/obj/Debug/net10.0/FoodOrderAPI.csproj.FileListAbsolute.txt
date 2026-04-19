@@ -334,3 +334,4 @@ D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/FoodOrderAPI/bin/Debug/net1
 /Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/FoodOrderAPI/obj/Debug/net10.0/FoodOrderAPI.genruntimeconfig.cache
 /Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/FoodOrderAPI/obj/Debug/net10.0/ref/FoodOrderAPI.dll
 /Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/FoodOrderAPI/bin/Debug/net10.0/FoodOrderAPI.staticwebassets.runtime.json
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/FoodOrderAPI/obj/Debug/net10.0/FoodOrderAPI.sourcelink.json

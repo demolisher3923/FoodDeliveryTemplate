@@ -32,3 +32,4 @@ D:/AjayParmar/Training/.NET/dotnet core/FoodOrderAPI/BussinessLayer/obj/Debug/ne
 /Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/BussinessLayer/obj/Debug/net10.0/BussinessLayer.pdb
 /Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/BussinessLayer/obj/Debug/net10.0/BussinessLayer.genruntimeconfig.cache
 /Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/BussinessLayer/obj/Debug/net10.0/ref/BussinessLayer.dll
+/Users/ajay/Downloads/FoodDeliveryTemplate/FoodOrderAPI/BussinessLayer/obj/Debug/net10.0/BussinessLayer.sourcelink.json

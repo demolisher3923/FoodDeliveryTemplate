@@ -5,13 +5,13 @@ using DataAccessLayer.Models;
 
 namespace BussinessLayer.Services
 {
-    public class AuthService:IAuthService
+    public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHashService _passwordHashService;
         private readonly ITokenGenratorService _tokenGenratorService;
 
-        public AuthService(IUserRepository userRepository,IPasswordHashService passwordHashService, ITokenGenratorService tokenGenratorService)
+        public AuthService(IUserRepository userRepository, IPasswordHashService passwordHashService, ITokenGenratorService tokenGenratorService)
         {
             _userRepository = userRepository;
             _passwordHashService = passwordHashService;
@@ -20,8 +20,9 @@ namespace BussinessLayer.Services
 
         public async Task<AuthResponse> Register(RegisterRequest request, CancellationToken cancellationToken = default)
         {
-            var existingUser = await _userRepository.GetByEmail(request.Email.Trim().ToLowerInvariant(), cancellationToken);
-            if(existingUser is not null)
+            var email = request.Email.Trim().ToLowerInvariant();
+            var existingUser = await _userRepository.GetByEmail(email, cancellationToken);
+            if (existingUser is not null)
             {
                 throw new InvalidOperationException("Email already exists.");
             }
@@ -29,7 +30,7 @@ namespace BussinessLayer.Services
             var user = new User
             {
                 FullName = request.FullName,
-                Email = request.Email.Trim().ToLowerInvariant(),
+                Email = email,
                 Password = _passwordHashService.Hash(request.Password),
                 MobileNumber = request.MobileNumber,
                 Address = request.Address,
@@ -46,21 +47,13 @@ namespace BussinessLayer.Services
 
             var token = _tokenGenratorService.GenrateToken(user, out var expiresAt);
 
-            return new AuthResponse
-            {
-                UserId = user.Id,
-                FullName = user.FullName,
-                Email = user.Email,
-                Role = user.Role,
-                ProfileUrl = user.ProfileUrl,
-                Token = token,
-                ExpiresAt = expiresAt
-            };
+            return CreateAuthResponse(user, token, expiresAt);
         }
 
         public async Task<AuthResponse> Login(LoginRequest request, CancellationToken cancellationToken = default)
         {
-            var user = await _userRepository.GetByEmail(request.Email.Trim().ToLowerInvariant(), cancellationToken);
+            var email = request.Email.Trim().ToLowerInvariant();
+            var user = await _userRepository.GetByEmail(email, cancellationToken);
             if (user is null)
             {
                 throw new UnauthorizedAccessException("Invalid email or password.");
@@ -68,13 +61,18 @@ namespace BussinessLayer.Services
 
             var isValidPassword = _passwordHashService.Verify(request.Password, user.Password);
 
-            if(!isValidPassword)
+            if (!isValidPassword)
             {
                 throw new UnauthorizedAccessException("Invalid email or password.");
             }
 
             var token = _tokenGenratorService.GenrateToken(user, out var expiresAt);
 
+            return CreateAuthResponse(user, token, expiresAt);
+        }
+
+        private static AuthResponse CreateAuthResponse(User user, string token, DateTime expiresAt)
+        {
             return new AuthResponse
             {
                 UserId = user.Id,

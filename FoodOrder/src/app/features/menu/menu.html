@@ -1,23 +1,33 @@
+
 <section class="menu-page">
-	<div class="heading">
-		<h2>Food Menu</h2>
-		<p>Explore dishes, place orders, and manage menu items with role-based access.</p>
-	</div>
+		<div class="heading">
+			<h2>Food Menu</h2>
+			<p>Explore dishes, place orders, and manage menu items with role-based access.</p>
+		</div>
 
-	@if (errorMessage) {
-		<p class="error">{{ errorMessage }}</p>
-	}
-	@if (message) {
-		<p class="success">{{ message }}</p>
-	}
+		@if (errorMessage) {
+			<p class="error">{{ errorMessage }}</p>
+		}
+		@if (message) {
+			<p class="success">{{ message }}</p>
+		}
 
-	@if (isAdmin()) {
-		<mat-card class="admin-editor">
-			<h3>{{ editingItemId ? 'Update Menu Item' : 'Create Menu Item' }}</h3>
-			<form [formGroup]="menuForm" (ngSubmit)="saveMenuItem()" class="editor-grid">
+		@if (isAdmin()) {
+			<mat-card class="admin-editor" id="editor-section">
+				<h3>{{ editingItemId ? 'Update Menu Item' : 'Create Menu Item' }}</h3>
+				<form [formGroup]="menuForm" (ngSubmit)="saveMenuItem()" class="editor-grid">
 				<mat-form-field appearance="outline">
 					<mat-label>Name</mat-label>
 					<input matInput formControlName="name" />
+				</mat-form-field>
+
+				<mat-form-field appearance="outline">
+					<mat-label>Category</mat-label>
+					<mat-select formControlName="category">
+						@for (category of categories; track category) {
+							<mat-option [value]="category">{{ category }}</mat-option>
+						}
+					</mat-select>
 				</mat-form-field>
 
 				<mat-form-field appearance="outline">
@@ -25,15 +35,26 @@
 					<input matInput type="number" formControlName="price" />
 				</mat-form-field>
 
+				<mat-form-field appearance="outline">
+					<mat-label>Stock Quantity</mat-label>
+					<input matInput type="number" formControlName="stockQuantity" />
+				</mat-form-field>
+
 				<mat-form-field appearance="outline" class="full-width">
 					<mat-label>Description</mat-label>
 					<textarea matInput rows="2" formControlName="description"></textarea>
 				</mat-form-field>
 
-				<mat-form-field appearance="outline" class="full-width">
-					<mat-label>Image URL (optional)</mat-label>
-					<input matInput formControlName="imageUrl" />
-				</mat-form-field>
+				<div class="full-width upload-field">
+					<label class="upload-title">Upload Product Image</label>
+					<input type="file" accept=".png,.jpg,.jpeg" (change)="onProductImageChange($event)" class="upload-input" />
+					@if (imageError) {
+						<p class="error">{{ imageError }}</p>
+					}
+					@if (productImagePreview) {
+						<img [src]="productImagePreview" alt="Product preview" class="admin-preview" />
+					}
+				</div>
 
 				<mat-slide-toggle formControlName="isAvailable">Available For Orders</mat-slide-toggle>
 
@@ -45,73 +66,88 @@
 				</div>
 			</form>
 		</mat-card>
-	}
+		}
 
-	@if (loading) {
-		<p>Loading menu...</p>
-	} @else {
-		<div class="menu-grid">
-			@for (item of menuItems; track item.id) {
-				<mat-card class="menu-card">
-					@if (item.imageUrl) {
-						<img [src]="item.imageUrl" alt="{{ item.name }}" class="dish-image" />
-					}
-					<h3>{{ item.name }}</h3>
-					<p class="description">{{ item.description }}</p>
-					<p class="price">₹{{ item.price }}</p>
-					<p class="availability" [class.unavailable]="!item.isAvailable">
-						{{ item.isAvailable ? 'Available' : 'Out of Stock' }}
-					</p>
+		@if (loading) {
+			<p>Loading menu...</p>
+		} @else {
+			<div class="menu-grid" id="menu-grid-section">
+				@for (item of menuItems; track item.id) {
+					<app-menu-item-card
+						[item]="item"
+						[isAdmin]="isAdmin()"
+						[isUser]="isUser()"
+						[quantity]="itemQuantities[item.id]"
+						[isAdding]="orderLoadingId === item.id"
+						(edit)="startEdit($event)"
+						(remove)="deleteMenuItem($event)"
+						(decrement)="decrementQuantity($event)"
+						(increment)="incrementQuantity($event)"
+						(addToCart)="placeOrder($event)">
+					</app-menu-item-card>
+				}
+			</div>
+		}
 
-					@if (isAdmin()) {
-						<button mat-stroked-button color="primary" (click)="startEdit(item)">Edit Item</button>
-					}
-
-					@if (isUser()) {
-						<div class="order-row">
-							<div class="qty-counter">
-								<button type="button" class="qty-btn" (click)="decrementQuantity(item.id)">-</button>
-								<span class="qty-value">{{ itemQuantities[item.id] }}</span>
-								<button type="button" class="qty-btn" (click)="incrementQuantity(item.id)">+</button>
+		@if (isUser()) {
+			<mat-card class="orders-card" id="cart-section">
+				<h3>My Cart</h3>
+				@if (cartItems.length === 0) {
+					<p>No items in cart yet.</p>
+				} @else {
+					<div class="orders-list">
+						@for (item of cartItems; track item.menuItemId) {
+							<div class="order-item">
+								<span>{{ item.menuItemName }} x {{ item.quantity }}</span>
+								<div class="cart-actions">
+									<span>₹{{ item.totalPrice }}</span>
+									<button mat-button color="warn" type="button" (click)="removeCartItem(item.menuItemId)">Remove</button>
+								</div>
 							</div>
-							<button
-								mat-raised-button
-								color="accent"
-								[disabled]="!item.isAvailable || orderLoadingId === item.id"
-								(click)="placeOrder(item)">
-								{{ orderLoadingId === item.id ? 'Adding...' : 'Add to cart' }}
+						}
+						<div class="checkout-row">
+							<strong>Total: ₹{{ cartTotal }}</strong>
+							<button mat-raised-button color="primary" [disabled]="orderLoadingId === 'checkout'" (click)="checkout()">
+								{{ orderLoadingId === 'checkout' ? 'Placing order...' : 'Checkout' }}
 							</button>
 						</div>
-					}
-				</mat-card>
-			}
-		</div>
-	}
-
-	@if (isUser()) {
-		<mat-card class="orders-card">
-			<h3>My Cart</h3>
-			@if (cartItems.length === 0) {
-				<p>No items in cart yet.</p>
-			} @else {
-				<div class="orders-list">
-					@for (item of cartItems; track item.menuItemId) {
-						<div class="order-item">
-							<span>{{ item.menuItemName }} x {{ item.quantity }}</span>
-							<div class="cart-actions">
-								<span>₹{{ item.totalPrice }}</span>
-								<button mat-button color="warn" type="button" (click)="removeCartItem(item.menuItemId)">Remove</button>
-							</div>
-						</div>
-					}
-					<div class="checkout-row">
-						<strong>Total: ₹{{ cartTotal }}</strong>
-						<button mat-raised-button color="primary" [disabled]="orderLoadingId === 'checkout'" (click)="checkout()">
-							{{ orderLoadingId === 'checkout' ? 'Placing order...' : 'Checkout' }}
-						</button>
 					</div>
+				}
+			</mat-card>
+
+			<mat-card class="orders-card" id="orders-section">
+				<div class="orders-header">
+					<h3>Your Orders</h3>
+					<button mat-stroked-button color="primary" type="button" (click)="loadMyOrders()">Refresh</button>
 				</div>
-			}
-		</mat-card>
-	}
+
+				@if (myOrders.length === 0) {
+					<p>You have not placed any orders yet.</p>
+				} @else {
+					<div class="my-orders-list">
+						@for (order of myOrders; track order.orderId) {
+							<div class="my-order-item">
+								<div class="my-order-row">
+									<strong>{{ order.menuItemName }}</strong>
+									<span>Qty: {{ order.quantity }}</span>
+									<span>Total: ₹{{ order.totalPrice }}</span>
+									<span [class]="getOrderStatusChipClass(order.status)">{{ order.status }}</span>
+								</div>
+
+								@if (order.status !== 'Cancelled') {
+									<div class="progress-row">
+										@for (step of orderProgressSteps; track step) {
+											<div class="progress-step" [class.completed]="isStepCompleted(order.status, step)" [class.current]="isStepCurrent(order.status, step)">
+												<span class="dot"></span>
+												<span class="step-label">{{ step }}</span>
+											</div>
+										}
+									</div>
+								}
+							</div>
+						}
+					</div>
+				}
+			</mat-card>
+		}
 </section>

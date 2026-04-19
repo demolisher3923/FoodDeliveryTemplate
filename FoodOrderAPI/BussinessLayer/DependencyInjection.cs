@@ -1,9 +1,6 @@
 ﻿using BussinessLayer.Interface;
 using BussinessLayer.Services;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BussinessLayer
 {
@@ -16,7 +13,6 @@ namespace BussinessLayer
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPasswordHashService, PasswordHashService>();
             services.AddScoped<ITokenGenratorService, JwtTokenGenrator>();
-            
         }
     }
 }

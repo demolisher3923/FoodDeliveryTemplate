@@ -39,7 +39,19 @@ namespace BussinessLayer.Services
             user.Address = request.Address.Trim();
             user.Gender = request.Gender.Trim();
             user.PreferredContactMethod = request.PreferredContactMethod.Trim();
-            user.Interests = string.Join(',', request.Interests.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()));
+
+            var interests = new List<string>();
+            foreach (var interest in request.Interests)
+            {
+                if (string.IsNullOrWhiteSpace(interest))
+                {
+                    continue;
+                }
+
+                interests.Add(interest.Trim());
+            }
+
+            user.Interests = string.Join(',', interests);
 
             if (!string.IsNullOrWhiteSpace(request.ProfileUrl))
             {
@@ -73,18 +85,26 @@ namespace BussinessLayer.Services
                     u.MobileNumber.ToLower().Contains(search));
             }
 
-            query = (sortBy, isDesc) switch
+            if (sortBy == "fullname")
             {
-                ("fullname", true) => query.OrderByDescending(x => x.FullName),
-                ("fullname", false) => query.OrderBy(x => x.FullName),
-                ("email", true) => query.OrderByDescending(x => x.Email),
-                ("email", false) => query.OrderBy(x => x.Email),
-                ("role", true) => query.OrderByDescending(x => x.Role),
-                ("role", false) => query.OrderBy(x => x.Role),
-                ("createdat", true) => query.OrderByDescending(x => x.CreatedAt),
-                ("createdat", false) => query.OrderBy(x => x.CreatedAt),
-                _ => query.OrderByDescending(x => x.CreatedAt)
-            };
+                query = isDesc ? query.OrderByDescending(x => x.FullName) : query.OrderBy(x => x.FullName);
+            }
+            else if (sortBy == "email")
+            {
+                query = isDesc ? query.OrderByDescending(x => x.Email) : query.OrderBy(x => x.Email);
+            }
+            else if (sortBy == "role")
+            {
+                query = isDesc ? query.OrderByDescending(x => x.Role) : query.OrderBy(x => x.Role);
+            }
+            else if (sortBy == "createdat")
+            {
+                query = isDesc ? query.OrderByDescending(x => x.CreatedAt) : query.OrderBy(x => x.CreatedAt);
+            }
+            else
+            {
+                query = query.OrderByDescending(x => x.CreatedAt);
+            }
 
             var totalCount = await query.CountAsync(cancellationToken);
             var totalPages = totalCount == 0 ? 0 : (int)Math.Ceiling(totalCount / (double)pageSize);
@@ -117,6 +137,20 @@ namespace BussinessLayer.Services
 
         private static UserProfileResponse MapProfile(DataAccessLayer.Models.User user)
         {
+            var interests = new List<string>();
+            if (!string.IsNullOrWhiteSpace(user.Interests))
+            {
+                var parts = user.Interests.Split(',');
+                foreach (var part in parts)
+                {
+                    var value = part.Trim();
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        interests.Add(value);
+                    }
+                }
+            }
+
             return new UserProfileResponse
             {
                 UserId = user.Id,
@@ -128,7 +162,7 @@ namespace BussinessLayer.Services
                 PreferredContactMethod = user.PreferredContactMethod,
                 ProfileUrl = user.ProfileUrl,
                 Role = user.Role,
-                Interests = user.Interests.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList()
+                Interests = interests
             };
         }
     }

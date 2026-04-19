@@ -2,7 +2,9 @@ export interface MenuItem {
   id: string;
   name: string;
   description: string;
+  category: string;
   price: number;
+  stockQuantity: number;
   isAvailable: boolean;
   imageUrl?: string | null;
 }
@@ -10,9 +12,12 @@ export interface MenuItem {
 export interface MenuItemRequest {
   name: string;
   description: string;
+  category: string;
   price: number;
+  stockQuantity: number;
   isAvailable: boolean;
   imageUrl?: string;
+  imageFile?: File | null;
 }
 
 export interface PlaceOrderRequest {

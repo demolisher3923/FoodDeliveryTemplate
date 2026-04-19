@@ -12,11 +12,15 @@ export class MenuService {
   }
 
   createMenuItem(request: MenuItemRequest) {
-    return this.http.post<MenuItem>(`${environment.apiUrl}/Menu`, request);
+    return this.http.post<MenuItem>(`${environment.apiUrl}/Menu`, this.toFormData(request));
   }
 
   updateMenuItem(id: string, request: MenuItemRequest) {
-    return this.http.put<MenuItem>(`${environment.apiUrl}/Menu/${id}`, request);
+    return this.http.put<MenuItem>(`${environment.apiUrl}/Menu/${id}`, this.toFormData(request));
+  }
+
+  deleteMenuItem(id: string) {
+    return this.http.delete<void>(`${environment.apiUrl}/Menu/${id}`);
   }
 
   placeOrder(menuItemId: string, request: PlaceOrderRequest) {
@@ -33,5 +37,25 @@ export class MenuService {
 
   updateOrderStatus(orderId: string, request: UpdateOrderStatusRequest) {
     return this.http.put<AdminOrderResponse>(`${environment.apiUrl}/Menu/admin-orders/${orderId}/status`, request);
+  }
+
+  private toFormData(request: MenuItemRequest): FormData {
+    const formData = new FormData();
+    formData.append('name', request.name);
+    formData.append('description', request.description);
+    formData.append('category', request.category);
+    formData.append('price', request.price.toString());
+    formData.append('stockQuantity', request.stockQuantity.toString());
+    formData.append('isAvailable', request.isAvailable.toString());
+
+    if (request.imageUrl) {
+      formData.append('imageUrl', request.imageUrl);
+    }
+
+    if (request.imageFile) {
+      formData.append('imageFile', request.imageFile);
+    }
+
+    return formData;
   }
 }

@@ -12,7 +12,7 @@ namespace FoodOrderAPI.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        private static readonly string[] AllowedImageContentTypes = ["image/png", "image/jpeg"];
+        private static readonly string[] AllowedImageContentTypes = new[] { "image/png", "image/jpeg" };
         private const long MaxProfileImageSizeInBytes = 5 * 1024 * 1024;
         private readonly IUserService _userService;
         private readonly IWebHostEnvironment _environment;
@@ -57,7 +57,17 @@ namespace FoodOrderAPI.Controllers
 
             if (request.ProfileImage is not null)
             {
-                if (!AllowedImageContentTypes.Contains(request.ProfileImage.ContentType))
+                var isAllowedImage = false;
+                foreach (var contentType in AllowedImageContentTypes)
+                {
+                    if (string.Equals(contentType, request.ProfileImage.ContentType, StringComparison.OrdinalIgnoreCase))
+                    {
+                        isAllowedImage = true;
+                        break;
+                    }
+                }
+
+                if (!isAllowedImage)
                 {
                     return BadRequest("Only .jpg, .jpeg and .png profile images are allowed.");
                 }
@@ -108,13 +118,34 @@ namespace FoodOrderAPI.Controllers
 
         private List<string> ReadInterestsFromForm()
         {
-            return Request.Form
-                .Where(x => x.Key.Equals("interests", StringComparison.OrdinalIgnoreCase) || x.Key.StartsWith("interests[", StringComparison.OrdinalIgnoreCase))
-                .SelectMany(x => x.Value)
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Select(x => x.Trim())
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
+            var parsedInterests = new List<string>();
+            foreach (var formItem in Request.Form)
+            {
+                var key = formItem.Key;
+                var isInterestsField = key.Equals("interests", StringComparison.OrdinalIgnoreCase)
+                    || key.StartsWith("interests[", StringComparison.OrdinalIgnoreCase);
+
+                if (!isInterestsField)
+                {
+                    continue;
+                }
+
+                foreach (var value in formItem.Value)
+                {
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        continue;
+                    }
+
+                    var cleanValue = value.Trim();
+                    if (!parsedInterests.Contains(cleanValue, StringComparer.OrdinalIgnoreCase))
+                    {
+                        parsedInterests.Add(cleanValue);
+                    }
+                }
+            }
+
+            return parsedInterests;
         }
     }
 }

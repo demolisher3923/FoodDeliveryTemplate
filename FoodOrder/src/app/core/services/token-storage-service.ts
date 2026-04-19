@@ -1,25 +1,35 @@
 import { Injectable } from '@angular/core';
 import { AuthResponse } from '../../models/auth.model';
 
-const AUTH_KEY = "food-order-auth"
+const AUTH_KEY = 'food-order-auth';
+
 @Injectable({
   providedIn: 'root',
 })
 export class TokenStorageService {
-  setAuth(auth:AuthResponse):void{
+  setAuth(auth: AuthResponse): void {
     localStorage.setItem(AUTH_KEY, JSON.stringify(auth));
   }
 
-  getAuth():AuthResponse | null {
+  getAuth(): AuthResponse | null {
     const data = localStorage.getItem(AUTH_KEY);
-    return data ? (JSON.parse(data) as AuthResponse):null
+    if (!data) {
+      return null;
+    }
+
+    return JSON.parse(data) as AuthResponse;
   }
 
-  clear(): void{
+  clear(): void {
     localStorage.removeItem(AUTH_KEY);
   }
 
-  getToken():string | null{
-    return this.getAuth()?.token ?? null
+  getToken(): string | null {
+    const auth = this.getAuth();
+    if (!auth) {
+      return null;
+    }
+
+    return auth.token;
   }
 }

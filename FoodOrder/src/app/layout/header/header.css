@@ -30,6 +30,18 @@
   cursor: pointer;
 }
 
+.cart-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  padding: 6px 12px;
+  margin-right: 10px;
+  font-size: 0.85rem;
+}
+
 .profile-chip span {
   font-size: 0.9rem;
   max-width: 180px;

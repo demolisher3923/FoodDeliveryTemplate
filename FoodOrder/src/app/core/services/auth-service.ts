@@ -12,7 +12,7 @@ import { tap } from 'rxjs';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly storage = inject(TokenStorageService);
-  private readonly router = inject(Router)
+  private readonly router = inject(Router);
 
   readonly authState = signal<AuthResponse | null>(this.storage.getAuth());
 
@@ -21,10 +21,9 @@ export class AuthService {
   }
 
   login(request: LoginRequest) {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/Auth/login`, request).pipe(
-      tap((response) => this.setSession(response))
-    );
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/Auth/login`, request).pipe(tap((response) => this.setSession(response)));
   }
+
   register(request: RegisterRequest) {
     const formData = new FormData();
     formData.append('fullName', request.fullName);
@@ -37,16 +36,17 @@ export class AuthService {
     formData.append('gender', request.gender);
     formData.append('preferredContactMethod', request.preferredContactMethod);
 
-    request.interests.forEach((interest, index) => formData.append(`interests[${index}]`, interest));
+    for (let index = 0; index < request.interests.length; index++) {
+      formData.append(`interests[${index}]`, request.interests[index]);
+    }
 
     if (request.profileImage) {
       formData.append('profileImage', request.profileImage);
     }
 
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/Auth/register`, formData).pipe(
-      tap((response) => this.setSession(response))
-    );
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/Auth/register`, formData).pipe(tap((response) => this.setSession(response)));
   }
+
   logout() {
     this.storage.clear();
     this.authState.set(null);
@@ -58,7 +58,12 @@ export class AuthService {
   }
 
   hasRole(role: 'Admin' | 'User'): boolean {
-    return this.authState()?.role === role;
+    const auth = this.authState();
+    if (!auth) {
+      return false;
+    }
+
+    return auth.role === role;
   }
 
   syncProfile(profile: { fullName: string; profileUrl?: string | null }) {
@@ -81,5 +86,4 @@ export class AuthService {
     this.storage.setAuth(response);
     this.authState.set(response);
   }
-
 }

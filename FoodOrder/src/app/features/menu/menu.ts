@@ -1,16 +1,21 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnDestroy, computed, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth-service';
 import { MenuService } from '../../core/services/menu-service';
 import { CartItem, MenuItem, MenuItemRequest, OrderResponse } from '../../models/menu.model';
 import { ToastService } from '../../core/services/toast-service';
 import Swal from 'sweetalert2';
-import { forkJoin } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
+import { MenuItemCard } from './components/menu-item-card/menu-item-card';
+import { CartStateService } from '../../core/services/cart-state-service';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-menu',
@@ -21,22 +26,33 @@ import { forkJoin } from 'rxjs';
     MatFormFieldModule,
     MatInputModule,
     MatSlideToggleModule,
+    MatSelectModule,
+    MenuItemCard,
   ],
   templateUrl: './menu.html',
   styleUrl: './menu.css',
 })
-export class Menu {
+export class Menu implements OnDestroy {
+  private static readonly ORDERS_UPDATED_EVENT_KEY = 'food-order-orders-updated-at';
+  private ordersRefreshTimer: ReturnType<typeof setInterval> | null = null;
   private readonly authService = inject(AuthService);
   private readonly menuService = inject(MenuService);
   private readonly fb = inject(FormBuilder);
   private readonly toastService = inject(ToastService);
+  private readonly cartStateService = inject(CartStateService);
 
   readonly isAdmin = computed(() => this.authService.hasRole('Admin'));
   readonly isUser = computed(() => this.authService.hasRole('User'));
+  readonly categories = ['Fast Food', 'Pizza', 'Beverages', 'Dessert', 'Healthy'];
+  readonly orderProgressSteps = ['Placed', 'Confirmed', 'Preparing', 'OutForDelivery', 'Delivered'];
 
   loading = false;
   saving = false;
   orderLoadingId: string | null = null;
+  imageError = '';
+  selectedProductImage: File | null = null;
+  productImagePreview: string | null = null;
+  existingImageUrl = '';
 
   message = '';
   errorMessage = '';
@@ -51,17 +67,38 @@ export class Menu {
   readonly menuForm = this.fb.group({
     name: ['', [Validators.required]],
     description: ['', [Validators.required]],
+    category: ['', [Validators.required]],
     price: [0, [Validators.required, Validators.min(1)]],
-    imageUrl: [''],
+    stockQuantity: [0, [Validators.required, Validators.min(0)]],
     isAvailable: [true],
   });
 
+  private readonly onStorageChange = (event: StorageEvent): void => {
+    if (!this.isUser() || event.key !== Menu.ORDERS_UPDATED_EVENT_KEY) {
+      return;
+    }
+
+    this.loadMyOrders();
+  };
+
   constructor() {
     this.loadMenu();
+    this.cartStateService.setCartCount(this.cartItems.length);
 
     if (this.isUser()) {
       this.loadMyOrders();
+      this.startOrdersAutoRefresh();
+      window.addEventListener('storage', this.onStorageChange);
     }
+  }
+
+  ngOnDestroy(): void {
+    if (this.ordersRefreshTimer) {
+      clearInterval(this.ordersRefreshTimer);
+      this.ordersRefreshTimer = null;
+    }
+
+    window.removeEventListener('storage', this.onStorageChange);
   }
 
   loadMenu() {
@@ -98,9 +135,63 @@ export class Menu {
   loadMyOrders() {
     this.menuService.getMyOrders().subscribe({
       next: (orders) => {
-        this.myOrders = orders;
+        this.myOrders = orders.map((order) => ({
+          ...order,
+          status: this.toCanonicalStatus(order.status),
+        }));
+      },
+      error: () => {
+        this.toastService.error('Unable to load your orders.');
       },
     });
+  }
+
+  getOrderStatusChipClass(status: string): string {
+    const normalized = this.toCanonicalStatus(status).toLowerCase();
+
+    if (normalized === 'delivered') {
+      return 'status-chip delivered';
+    }
+
+    if (normalized === 'cancelled') {
+      return 'status-chip cancelled';
+    }
+
+    if (normalized === 'outfordelivery') {
+      return 'status-chip out-for-delivery';
+    }
+
+    if (normalized === 'preparing') {
+      return 'status-chip preparing';
+    }
+
+    if (normalized === 'confirmed') {
+      return 'status-chip confirmed';
+    }
+
+    return 'status-chip placed';
+  }
+
+  isStepCompleted(status: string, step: string): boolean {
+    const normalizedStatus = this.toCanonicalStatus(status);
+    const normalizedStep = this.toCanonicalStatus(step);
+
+    if (normalizedStatus === 'Cancelled') {
+      return false;
+    }
+
+    return this.orderProgressSteps.indexOf(normalizedStep) <= this.orderProgressSteps.indexOf(normalizedStatus);
+  }
+
+  isStepCurrent(status: string, step: string): boolean {
+    const normalizedStatus = this.toCanonicalStatus(status);
+    const normalizedStep = this.toCanonicalStatus(step);
+
+    if (normalizedStatus === 'Cancelled') {
+      return false;
+    }
+
+    return normalizedStatus === normalizedStep;
   }
 
   startEdit(item: MenuItem) {
@@ -108,10 +199,15 @@ export class Menu {
     this.menuForm.patchValue({
       name: item.name,
       description: item.description,
+      category: item.category,
       price: item.price,
-      imageUrl: item.imageUrl ?? '',
+      stockQuantity: item.stockQuantity,
       isAvailable: item.isAvailable,
     });
+    this.existingImageUrl = item.imageUrl ?? '';
+    this.selectedProductImage = null;
+    this.productImagePreview = this.resolveImageUrl(this.existingImageUrl);
+    this.imageError = '';
   }
 
   resetForm() {
@@ -119,14 +215,54 @@ export class Menu {
     this.menuForm.reset({
       name: '',
       description: '',
+      category: '',
       price: 0,
-      imageUrl: '',
+      stockQuantity: 0,
       isAvailable: true,
     });
+    this.existingImageUrl = '';
+    this.selectedProductImage = null;
+    this.productImagePreview = null;
+    this.imageError = '';
+  }
+
+  onProductImageChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      this.selectedProductImage = null;
+      this.productImagePreview = this.resolveImageUrl(this.existingImageUrl);
+      return;
+    }
+
+    const validTypes = ['image/png', 'image/jpeg'];
+    if (!validTypes.includes(file.type)) {
+      this.imageError = 'Only JPG and PNG product images are allowed.';
+      this.selectedProductImage = null;
+      this.productImagePreview = null;
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.imageError = 'Image must be 5MB or smaller.';
+      this.selectedProductImage = null;
+      this.productImagePreview = null;
+      return;
+    }
+
+    this.imageError = '';
+    this.selectedProductImage = file;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.productImagePreview = typeof reader.result === 'string' ? reader.result : null;
+    };
+    reader.readAsDataURL(file);
   }
 
   saveMenuItem() {
-    if (this.menuForm.invalid || this.saving || !this.isAdmin()) {
+    if (this.menuForm.invalid || this.saving || !this.isAdmin() || !!this.imageError) {
       this.menuForm.markAllAsTouched();
       return;
     }
@@ -139,9 +275,12 @@ export class Menu {
     const request: MenuItemRequest = {
       name: value.name ?? '',
       description: value.description ?? '',
+      category: value.category ?? '',
       price: Number(value.price ?? 0),
-      imageUrl: value.imageUrl ?? '',
+      stockQuantity: Number(value.stockQuantity ?? 0),
+      imageUrl: this.existingImageUrl,
       isAvailable: !!value.isAvailable,
+      imageFile: this.selectedProductImage,
     };
 
     const call = this.editingItemId
@@ -160,6 +299,34 @@ export class Menu {
         this.saving = false;
         this.errorMessage = 'Failed to save menu item.';
         this.toastService.error(this.errorMessage);
+      },
+    });
+  }
+
+  async deleteMenuItem(item: MenuItem) {
+    if (!this.isAdmin()) {
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: 'Delete product?',
+      text: `${item.name} will be removed from active menu.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    this.menuService.deleteMenuItem(item.id).subscribe({
+      next: () => {
+        this.toastService.success('Product deleted.');
+        this.loadMenu();
+      },
+      error: () => {
+        this.toastService.error('Failed to delete product.');
       },
     });
   }
@@ -192,11 +359,13 @@ export class Menu {
 
     this.itemQuantities[item.id] = 1;
     this.message = `${item.name} added to cart.`;
+    this.cartStateService.setCartCount(this.cartItems.length);
     this.toastService.success(this.message);
   }
 
   removeCartItem(menuItemId: string) {
     this.cartItems = this.cartItems.filter((x) => x.menuItemId !== menuItemId);
+    this.cartStateService.setCartCount(this.cartItems.length);
   }
 
   get cartTotal(): number {
@@ -225,20 +394,106 @@ export class Menu {
     this.message = '';
     this.errorMessage = '';
 
-    const calls = this.cartItems.map((item) => this.menuService.placeOrder(item.menuItemId, { quantity: item.quantity }));
+    try {
+      const failedItems: CartItem[] = [];
+      const failedMessages: string[] = [];
+      let successCount = 0;
 
-    forkJoin(calls).subscribe({
-      next: () => {
-        this.orderLoadingId = null;
-        this.cartItems = [];
+      for (const item of this.cartItems) {
+        try {
+          await firstValueFrom(this.menuService.placeOrder(item.menuItemId, { quantity: item.quantity }));
+          successCount += 1;
+        } catch (error) {
+          failedItems.push(item);
+          const itemError = this.extractApiErrorMessage(error) ?? 'Unable to place this item.';
+          failedMessages.push(`${item.menuItemName}: ${itemError}`);
+        }
+      }
+
+      this.cartItems = failedItems;
+      this.cartStateService.setCartCount(this.cartItems.length);
+
+      if (successCount > 0) {
         this.loadMyOrders();
+        this.loadMenu();
+      }
+
+      if (successCount > 0 && failedItems.length === 0) {
         this.toastService.success('Order placed successfully.');
-      },
-      error: () => {
-        this.orderLoadingId = null;
-        this.errorMessage = 'Unable to complete checkout.';
+      } else if (successCount > 0 && failedItems.length > 0) {
+        this.toastService.success(`${successCount} item(s) placed. ${failedItems.length} item(s) left in cart.`);
+        this.errorMessage = failedMessages.join(' | ');
+      } else {
+        this.errorMessage = failedMessages.join(' | ') || 'Unable to complete checkout.';
         this.toastService.error(this.errorMessage);
-      },
-    });
+      }
+    } finally {
+      this.orderLoadingId = null;
+    }
   }
+
+  private resolveImageUrl(imageUrl: string | null): string | null {
+    if (!imageUrl || !imageUrl.trim()) {
+      return null;
+    }
+
+    if (imageUrl.startsWith('http') || imageUrl.startsWith('data:image')) {
+      return imageUrl;
+    }
+
+    const apiHost = environment.apiUrl.replace('/api', '');
+    return `${apiHost}${imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`}`;
+  }
+
+  private extractApiErrorMessage(error: unknown): string | null {
+    if (error instanceof HttpErrorResponse) {
+      if (typeof error.error === 'string') {
+        return error.error;
+      }
+
+      if (error.error?.message) {
+        return error.error.message;
+      }
+    }
+
+    return null;
+  }
+
+  private startOrdersAutoRefresh(): void {
+    this.ordersRefreshTimer = setInterval(() => {
+      this.loadMyOrders();
+    }, 5000);
+  }
+
+  private toCanonicalStatus(status: string): string {
+    const value = (status ?? '').trim();
+    const compressed = value.replace(/[^a-z0-9]/gi, '').toLowerCase();
+
+    if (compressed === 'placed') {
+      return 'Placed';
+    }
+
+    if (compressed === 'confirmed') {
+      return 'Confirmed';
+    }
+
+    if (compressed === 'preparing') {
+      return 'Preparing';
+    }
+
+    if (compressed === 'outfordelivery') {
+      return 'OutForDelivery';
+    }
+
+    if (compressed === 'delivered') {
+      return 'Delivered';
+    }
+
+    if (compressed === 'cancelled') {
+      return 'Cancelled';
+    }
+
+    return value;
+  }
+
 }

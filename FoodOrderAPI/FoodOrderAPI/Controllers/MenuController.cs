@@ -10,11 +10,15 @@ namespace FoodOrderAPI.Controllers
     [ApiController]
     public class MenuController : ControllerBase
     {
+        private static readonly string[] AllowedImageContentTypes = new[] { "image/png", "image/jpeg" };
+        private const long MaxProductImageSizeInBytes = 5 * 1024 * 1024;
         private readonly IMenuService _menuService;
+        private readonly IWebHostEnvironment _environment;
 
-        public MenuController(IMenuService menuService)
+        public MenuController(IMenuService menuService, IWebHostEnvironment environment)
         {
             _menuService = menuService;
+            _environment = environment;
         }
 
         [HttpGet]
@@ -26,8 +30,19 @@ namespace FoodOrderAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<MenuItemResponse>> CreateMenuItem([FromBody] MenuItemRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<MenuItemResponse>> CreateMenuItem([FromForm] MenuItemRequest request, CancellationToken cancellationToken)
         {
+            if (request.ImageFile is not null)
+            {
+                var imageValidationError = ValidateImage(request.ImageFile);
+                if (imageValidationError is not null)
+                {
+                    return BadRequest(imageValidationError);
+                }
+
+                request.ImageUrl = await SaveProductImageAsync(request.ImageFile, cancellationToken);
+            }
+
             var createdBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
             var created = await _menuService.CreateMenuItem(request, createdBy, cancellationToken);
             return Ok(created);
@@ -35,13 +50,40 @@ namespace FoodOrderAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<MenuItemResponse>> UpdateMenuItem(Guid id, [FromBody] MenuItemRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<MenuItemResponse>> UpdateMenuItem(Guid id, [FromForm] MenuItemRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (request.ImageFile is not null)
+                {
+                    var imageValidationError = ValidateImage(request.ImageFile);
+                    if (imageValidationError is not null)
+                    {
+                        return BadRequest(imageValidationError);
+                    }
+
+                    request.ImageUrl = await SaveProductImageAsync(request.ImageFile, cancellationToken);
+                }
+
+                var updatedBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
+                var updated = await _menuService.UpdateMenuItem(id, request, updatedBy, cancellationToken);
+                return Ok(updated);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id:guid}")]
+        public async Task<ActionResult> DeleteMenuItem(Guid id, CancellationToken cancellationToken)
         {
             try
             {
                 var updatedBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
-                var updated = await _menuService.UpdateMenuItem(id, request, updatedBy, cancellationToken);
-                return Ok(updated);
+                await _menuService.DeleteMenuItem(id, updatedBy, cancellationToken);
+                return NoContent();
             }
             catch (KeyNotFoundException ex)
             {
@@ -108,6 +150,42 @@ namespace FoodOrderAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        private string? ValidateImage(IFormFile file)
+        {
+            if (!AllowedImageContentTypes.Contains(file.ContentType))
+            {
+                return "Only .jpg, .jpeg and .png product images are allowed.";
+            }
+
+            if (file.Length > MaxProductImageSizeInBytes)
+            {
+                return "Product image size must be less than or equal to 5 MB.";
+            }
+
+            return null;
+        }
+
+        private async Task<string> SaveProductImageAsync(IFormFile file, CancellationToken cancellationToken)
+        {
+            var webRootPath = _environment.WebRootPath;
+            if (string.IsNullOrWhiteSpace(webRootPath))
+            {
+                webRootPath = Path.Combine(_environment.ContentRootPath, "wwwroot");
+            }
+
+            var uploadsDirectory = Path.Combine(webRootPath, "uploads", "products");
+            Directory.CreateDirectory(uploadsDirectory);
+
+            var extension = Path.GetExtension(file.FileName);
+            var uniqueFileName = $"{Guid.NewGuid():N}{extension}";
+            var filePath = Path.Combine(uploadsDirectory, uniqueFileName);
+
+            await using var stream = new FileStream(filePath, FileMode.Create);
+            await file.CopyToAsync(stream, cancellationToken);
+
+            return $"/uploads/products/{uniqueFileName}";
         }
     }
 }

@@ -12,6 +12,9 @@
       <button mat-button (click)="goToDashboard()">Dashboard</button>
     }
     <a mat-button routerLink="/menu">Browse Menu</a>
+    @if (isUser()) {
+      <span class="cart-chip">Cart: {{ cartCount() }}</span>
+    }
     @if (isAdmin()) {
       <a mat-button routerLink="/admin/dashboard">Admin Dashboard</a>
     }
