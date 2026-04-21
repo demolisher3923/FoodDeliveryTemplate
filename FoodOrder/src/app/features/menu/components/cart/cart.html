@@ -1,0 +1,24 @@
+<mat-card class="orders-card" id="cart-section">
+  <h3>My Cart</h3>
+  @if (cartItems.length === 0) {
+    <p>No items in cart yet.</p>
+  } @else {
+    <div class="orders-list">
+      @for (item of cartItems; track item.menuItemId) {
+        <div class="order-item">
+          <span>{{ item.menuItemName }} x {{ item.quantity }}</span>
+          <div class="cart-actions">
+            <span>₹{{ item.totalPrice }}</span>
+            <button mat-button color="warn" type="button" (click)="itemRemoved.emit(item.menuItemId)">Remove</button>
+          </div>
+        </div>
+      }
+      <div class="checkout-row">
+        <strong>Total: ₹{{ cartTotal }}</strong>
+        <button mat-raised-button color="primary" [disabled]="isCheckingOut" (click)="checkoutClicked.emit()">
+          {{ isCheckingOut ? 'Placing order...' : 'Checkout' }}
+        </button>
+      </div>
+    </div>
+  }
+</mat-card>

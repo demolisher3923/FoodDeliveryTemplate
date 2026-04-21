@@ -1,195 +1,61 @@
 <section class="admin-dashboard">
-		<div class="intro" id="dashboard-section">
-			<h2>Admin Dashboard</h2>
-			<p>Track your restaurant performance and jump into key management tasks quickly.</p>
-		</div>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidenav">
+      <h3>Admin Panel</h3>
+      <button type="button" [class.active]="activeSection === 'dashboard'" (click)="setActiveSection('dashboard')">Dashboard</button>
+      <button type="button" [class.active]="activeSection === 'users'" (click)="setActiveSection('users')">Users Table</button>
+      <button type="button" [class.active]="activeSection === 'orders'" (click)="setActiveSection('orders')">Orders Table</button>
+    </aside>
 
-		<div class="stats-grid">
-			<mat-card class="stat-card">
-				<h3>Today's Orders</h3>
-				<div class="value-row">
-					<span class="value">{{ todaysOrdersCount }}</span>
-				</div>
-			</mat-card>
+    <div class="dashboard-content">
+      @if (activeSection === 'dashboard') {
+        <app-admin-dashboard-panel
+          [todaysOrdersCount]="todaysOrdersCount"
+          [todaysRevenue]="todaysRevenue"
+          [activeUsersCount]="activeUsersCount"
+          [orders]="orders">
+        </app-admin-dashboard-panel>
+      }
 
-			<mat-card class="stat-card">
-				<h3>Today's Revenue</h3>
-				<div class="value-row">
-					<span class="value">₹{{ todaysRevenue }}</span>
-				</div>
-			</mat-card>
+      @if (activeSection === 'users') {
+        <app-admin-users-table
+          [searchForm]="searchForm"
+          [loadingUsers]="loadingUsers"
+          [users]="users"
+          [pageNumber]="pageNumber"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="pageSizeOptions"
+          [totalPages]="totalPages"
+          [totalCount]="totalCount"
+          [pageNumbers]="pageNumbers"
+          (searchApplied)="applySearch()"
+          (searchCleared)="clearSearch()"
+          (sortChanged)="changeSort($event)"
+          (pageChanged)="goToPage($event)"
+          (pageSizeChanged)="onUsersPageSizeChange($event)">
+        </app-admin-users-table>
+      }
 
-			<mat-card class="stat-card">
-				<h3>Active Users (Current Page)</h3>
-				<div class="value-row">
-					<span class="value">{{ activeUsersCount }}</span>
-				</div>
-			</mat-card>
-		</div>
-
-		<div class="charts-grid">
-			<mat-card class="chart-card">
-				<h3>Realtime KPI Chart</h3>
-				<div class="chart-wrap">
-					<canvas #kpiChart></canvas>
-				</div>
-			</mat-card>
-
-			<mat-card class="chart-card">
-				<h3>Orders by Status</h3>
-				<div class="chart-wrap">
-					<canvas #ordersChart></canvas>
-				</div>
-			</mat-card>
-		</div>
-
-	<mat-card class="users-card" id="users-section">
-		<div class="users-header">
-			<h3>Users</h3>
-			<form [formGroup]="searchForm" class="search-row" (ngSubmit)="applySearch()">
-				<mat-form-field appearance="outline" class="search-field">
-					<mat-label>Search user</mat-label>
-					<input matInput formControlName="search" placeholder="name, email or mobile" />
-				</mat-form-field>
-				<button mat-raised-button color="primary" type="submit">Search</button>
-				<button mat-button type="button" (click)="clearSearch()">Clear</button>
-				<label class="table-size">
-					<span>Page Size</span>
-					<select [value]="pageSize" (change)="onUsersPageSizeChange($any($event.target).value)">
-						@for (size of pageSizeOptions; track size) {
-							<option [value]="size">{{ size }}</option>
-						}
-					</select>
-				</label>
-			</form>
-		</div>
-
-		@if (loadingUsers) {
-			<p>Loading users...</p>
-		} @else {
-			<div class="table-wrap">
-				<table class="users-table">
-					<thead>
-						<tr>
-							<th>Sr No</th>
-							<th><button type="button" class="sort-btn" (click)="changeSort('fullName')">Full Name</button></th>
-							<th><button type="button" class="sort-btn" (click)="changeSort('email')">Email</button></th>
-							<th>Mobile</th>
-							<th><button type="button" class="sort-btn" (click)="changeSort('role')">Role</button></th>
-							<th>Status</th>
-							<th><button type="button" class="sort-btn" (click)="changeSort('createdAt')">Created</button></th>
-						</tr>
-					</thead>
-					<tbody>
-						@for (user of users; track user.userId; let index = $index) {
-							<tr>
-								<td>{{ ((pageNumber - 1) * pageSize) + index + 1 }}</td>
-								<td>{{ user.fullName }}</td>
-								<td>{{ user.email }}</td>
-								<td>{{ user.mobileNumber }}</td>
-								<td>{{ user.role }}</td>
-								<td>{{ user.isActive ? 'Active' : 'Inactive' }}</td>
-								<td>{{ user.createdAt | date:'mediumDate' }}</td>
-							</tr>
-						}
-						@if (users.length === 0) {
-							<tr>
-								<td colspan="7" class="empty-row">No users found.</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-
-			<div class="pagination-row">
-				<span>Showing page {{ pageNumber }} of {{ totalPages || 1 }} ({{ totalCount }} users)</span>
-				<div class="pager-actions">
-					@for (page of pageNumbers; track page) {
-						<button mat-stroked-button [class.active-page]="page === pageNumber" (click)="goToPage(page)">{{ page }}</button>
-					}
-				</div>
-			</div>
-		}
-	</mat-card>
-
-	<mat-card class="users-card" id="orders-section">
-		<div class="users-header">
-			<h3>Orders</h3>
-			<div class="orders-actions">
-				<label class="table-size">
-					<span>Page Size</span>
-					<select [value]="ordersPageSize" (change)="onOrdersPageSizeChange($any($event.target).value)">
-						@for (size of pageSizeOptions; track size) {
-							<option [value]="size">{{ size }}</option>
-						}
-					</select>
-				</label>
-				<button mat-stroked-button color="primary" (click)="loadOrders()">Refresh Orders</button>
-			</div>
-		</div>
-
-		@if (loadingOrders) {
-			<p>Loading orders...</p>
-		} @else {
-			<div class="table-wrap">
-				<table class="users-table">
-					<thead>
-						<tr>
-							<th>Sr No</th>
-							<th>User</th>
-							<th>Email</th>
-							<th>Item</th>
-							<th>Qty</th>
-							<th>Total</th>
-							<th>Status</th>
-							<th>Update Status</th>
-							<th>Created</th>
-						</tr>
-					</thead>
-					<tbody>
-						@for (order of pagedOrders; track order.orderId; let index = $index) {
-							<tr>
-								<td>{{ ((ordersPageNumber - 1) * ordersPageSize) + index + 1 }}</td>
-								<td>{{ order.userName }}</td>
-								<td>{{ order.userEmail }}</td>
-								<td>{{ order.menuItemName }}</td>
-								<td>{{ order.quantity }}</td>
-								<td>₹{{ order.totalPrice }}</td>
-								<td>
-									<span [class]="getStatusChipClass(order.status)">{{ order.status }}</span>
-								</td>
-								<td>
-									<div class="status-editor">
-										<select [value]="orderStatusDrafts[order.orderId]" (change)="onStatusDraftChange(order.orderId, $any($event.target).value)">
-											@for (status of orderStatusOptions; track status) {
-												<option [value]="status">{{ status }}</option>
-											}
-										</select>
-										<button mat-button color="primary" type="button" [disabled]="updatingOrderId === order.orderId" (click)="updateOrderStatus(order)">
-											{{ updatingOrderId === order.orderId ? 'Saving...' : 'Save' }}
-										</button>
-									</div>
-								</td>
-								<td>{{ order.createdAt | date:'medium' }}</td>
-							</tr>
-						}
-						@if (pagedOrders.length === 0) {
-							<tr>
-								<td colspan="9" class="empty-row">No orders found.</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-
-			<div class="pagination-row">
-				<span>Showing page {{ ordersPageNumber }} of {{ ordersTotalPages || 1 }} ({{ orders.length }} orders)</span>
-				<div class="pager-actions">
-					@for (page of orderPageNumbers; track page) {
-						<button mat-stroked-button [class.active-page]="page === ordersPageNumber" (click)="goToOrdersPage(page)">{{ page }}</button>
-					}
-				</div>
-			</div>
-		}
-	</mat-card>
+      @if (activeSection === 'orders') {
+        <app-admin-orders-table
+          [loadingOrders]="loadingOrders"
+          [pagedOrders]="pagedOrders"
+          [ordersCount]="orders.length"
+          [ordersPageNumber]="ordersPageNumber"
+          [ordersPageSize]="ordersPageSize"
+          [ordersTotalPages]="ordersTotalPages"
+          [pageSizeOptions]="pageSizeOptions"
+          [orderPageNumbers]="orderPageNumbers"
+          [orderStatusOptions]="orderStatusOptions"
+          [orderStatusDrafts]="orderStatusDrafts"
+          [updatingOrderId]="updatingOrderId"
+          (refreshOrders)="loadOrders()"
+          (orderPageSizeChanged)="onOrdersPageSizeChange($event)"
+          (ordersPageChanged)="goToOrdersPage($event)"
+          (statusDraftChanged)="onStatusDraftChange($event.orderId, $event.status)"
+          (statusSaved)="updateOrderStatus($event)">
+        </app-admin-orders-table>
+      }
+    </div>
+  </div>
 </section>

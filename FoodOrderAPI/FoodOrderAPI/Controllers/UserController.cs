@@ -25,22 +25,22 @@ namespace FoodOrderAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<AdminUserListItemResponse>>> GetUsers([FromQuery] PaginationRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<PaginationResponse<AdminUserListItemResponse>>> GetUsers([FromQuery] PaginationRequest request)
         {
-            var users = await _userService.GetUsers(request, cancellationToken);
+            var users = await _userService.GetUsers(request);
             return Ok(users);
         }
 
         [HttpGet("me")]
-        public async Task<ActionResult<UserProfileResponse>> GetMe(CancellationToken cancellationToken)
+        public async Task<ActionResult<UserProfileResponse>> GetMe()
         {
             var userId = GetCurrentUserId();
-            var profile = await _userService.GetProfile(userId, cancellationToken);
+            var profile = await _userService.GetProfile(userId);
             return Ok(profile);
         }
 
         [HttpPut("me")]
-        public async Task<ActionResult<UserProfileResponse>> UpdateMe([FromForm] UserProfileUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<UserProfileResponse>> UpdateMe([FromForm] UserProfileUpdateRequest request)
         {
             var userId = GetCurrentUserId();
 
@@ -77,10 +77,10 @@ namespace FoodOrderAPI.Controllers
                     return BadRequest("Profile image size must be less than or equal to 5 MB.");
                 }
 
-                request.ProfileUrl = await SaveProfileImageAsync(request.ProfileImage, cancellationToken);
+                request.ProfileUrl = await SaveProfileImageAsync(request.ProfileImage);
             }
 
-            var profile = await _userService.UpdateProfile(userId, request, cancellationToken);
+            var profile = await _userService.UpdateProfile(userId, request);
             return Ok(profile);
         }
 
@@ -95,7 +95,7 @@ namespace FoodOrderAPI.Controllers
             return userId;
         }
 
-        private async Task<string> SaveProfileImageAsync(IFormFile file, CancellationToken cancellationToken)
+        private async Task<string> SaveProfileImageAsync(IFormFile file)
         {
             var webRootPath = _environment.WebRootPath;
             if (string.IsNullOrWhiteSpace(webRootPath))
@@ -111,7 +111,7 @@ namespace FoodOrderAPI.Controllers
             var filePath = Path.Combine(uploadsDirectory, uniqueFileName);
 
             await using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream, cancellationToken);
+            await file.CopyToAsync(stream);
 
             return $"/uploads/profiles/{uniqueFileName}";
         }

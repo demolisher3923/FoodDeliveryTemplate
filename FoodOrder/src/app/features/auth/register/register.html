@@ -72,33 +72,39 @@
             }
         </mat-form-field>
 
-        <label class="label">Profile Image</label>
-        <input type="file" (change)="onProfileImageChange($event)" accept=".png,.jpg,.jpeg" />
-        @if (imageError) {
-        <p class="error">{{ imageError }}</p>
-        }
-        @if (profileImagePreview) {
-        <div class="preview-wrapper">
-            <img [src]="profileImagePreview" alt="Profile preview" class="profile-preview" />
-        </div>
-        }
+        <div class="media-preferences-grid">
+            <div class="image-block">
+                <label class="label">Profile Image</label>
+                @if (profileImagePreview) {
+                <img [src]="profileImagePreview" alt="Profile preview" class="profile-preview" />
+                } @else {
+                <div class="profile-placeholder">No Image</div>
+                }
 
-        <label class="label">Interests/Categories</label>
-        <div class="checkbox-grid" formArrayName="interests">
-            @for (interest of interstsList; track interest; let i = $index) {
-            <mat-checkbox [formControlName]="i">{{ interest }}</mat-checkbox>
-            }
-        </div>
-        @if (!hasSelectedInterest && form.touched) {
-        <p class="error">Please select at least one interest.</p>
-        }
+                <input type="file" (change)="onProfileImageChange($event)" accept=".png,.jpg,.jpeg" />
+                @if (imageError) {
+                <p class="error">{{ imageError }}</p>
+                }
+            </div>
 
-        <label class="label">Preferred Contact Method</label>
-        <mat-radio-group formControlName="preferredContactMethod" class="radio-group">
-            <mat-radio-button value="Email">Email</mat-radio-button>
-            <mat-radio-button value="Mobile">Mobile</mat-radio-button>
-            <mat-radio-button value="SMs">SMS</mat-radio-button>
-        </mat-radio-group>
+            <div class="interests-block">
+                <label class="label">Interests/Categories</label>
+                <div class="checkbox-grid" formArrayName="interests">
+                    @for (interest of interstsList; track interest; let i = $index) {
+                    <mat-checkbox [formControlName]="i">{{ interest }}</mat-checkbox>
+                    }
+                </div>
+                @if (!hasSelectedInterest && form.touched) {
+                <p class="error">Please select at least one interest.</p>
+                }
+                <label class="label">Preferred Contact Method</label>
+                <mat-radio-group formControlName="preferredContactMethod" class="radio-group">
+                    <mat-radio-button value="Email">Email</mat-radio-button>
+                    <mat-radio-button value="Mobile">Mobile</mat-radio-button>
+                    <mat-radio-button value="SMs">SMS</mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
         <button mat-raised-button color="primary" type="submit"
             [disabled]="form.invalid || passwordMismatch || !hasSelectedInterest || loading || !!imageError">
             {{ loading ? 'Submitting...' : 'Register' }}

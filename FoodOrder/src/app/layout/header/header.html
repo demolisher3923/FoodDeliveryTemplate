@@ -11,12 +11,11 @@
     @if (isAdmin()) {
       <button mat-button (click)="goToDashboard()">Dashboard</button>
     }
-    <a mat-button routerLink="/menu">Browse Menu</a>
+    @if (isUser()) {
+      <a mat-button routerLink="/menu">Browse Menu</a>
+    }
     @if (isUser()) {
       <span class="cart-chip">Cart: {{ cartCount() }}</span>
-    }
-    @if (isAdmin()) {
-      <a mat-button routerLink="/admin/dashboard">Admin Dashboard</a>
     }
     @if (isUser()) {
       <button class="profile-chip" type="button" routerLink="/profile">

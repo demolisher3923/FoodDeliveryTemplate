@@ -4,6 +4,52 @@
 	padding: 24px;
 }
 
+.menu-layout {
+	display: grid;
+	grid-template-columns: 220px 1fr;
+	gap: 16px;
+	align-items: start;
+}
+
+.menu-content {
+	min-width: 0;
+}
+
+.user-sidenav {
+	position: sticky;
+	top: 86px;
+	background: #f8fbff;
+	border: 1px solid #dbe4ed;
+	border-radius: 12px;
+	padding: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.user-sidenav h3 {
+	margin: 0 0 6px;
+	font-size: 0.95rem;
+	color: #2a3a4c;
+}
+
+.user-sidenav button {
+	text-align: left;
+	border: 1px solid #d3deea;
+	background: #fff;
+	padding: 8px 10px;
+	border-radius: 8px;
+	font-size: 0.9rem;
+	cursor: pointer;
+	color: #33465a;
+}
+
+.user-sidenav button.active {
+	background: #1d4ed8;
+	border-color: #1d4ed8;
+	color: #fff;
+}
+
 .heading p {
 	color: #607080;
 	margin-top: 6px;
@@ -278,6 +324,14 @@
 }
 
 @media (max-width: 760px) {
+	.menu-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.user-sidenav {
+		position: static;
+	}
+
 	.editor-grid {
 		grid-template-columns: 1fr;
 	}

@@ -16,6 +16,8 @@ import { firstValueFrom } from 'rxjs';
 import { MenuItemCard } from './components/menu-item-card/menu-item-card';
 import { CartStateService } from '../../core/services/cart-state-service';
 import { environment } from '../../../environments/environment.development';
+import { UserCart } from './components/cart/cart';
+import { UserOrders } from './components/user-orders/user-orders';
 
 @Component({
   selector: 'app-menu',
@@ -28,6 +30,8 @@ import { environment } from '../../../environments/environment.development';
     MatSlideToggleModule,
     MatSelectModule,
     MenuItemCard,
+    UserCart,
+    UserOrders,
   ],
   templateUrl: './menu.html',
   styleUrl: './menu.css',
@@ -44,8 +48,6 @@ export class Menu implements OnDestroy {
   readonly isAdmin = computed(() => this.authService.hasRole('Admin'));
   readonly isUser = computed(() => this.authService.hasRole('User'));
   readonly categories = ['Fast Food', 'Pizza', 'Beverages', 'Dessert', 'Healthy'];
-  readonly orderProgressSteps = ['Placed', 'Confirmed', 'Preparing', 'OutForDelivery', 'Delivered'];
-
   loading = false;
   saving = false;
   orderLoadingId: string | null = null;
@@ -63,6 +65,7 @@ export class Menu implements OnDestroy {
   cartItems: CartItem[] = [];
 
   editingItemId: string | null = null;
+  activeUserSection: 'menu' | 'cart' | 'orders' = 'menu';
 
   readonly menuForm = this.fb.group({
     name: ['', [Validators.required]],
@@ -144,54 +147,6 @@ export class Menu implements OnDestroy {
         this.toastService.error('Unable to load your orders.');
       },
     });
-  }
-
-  getOrderStatusChipClass(status: string): string {
-    const normalized = this.toCanonicalStatus(status).toLowerCase();
-
-    if (normalized === 'delivered') {
-      return 'status-chip delivered';
-    }
-
-    if (normalized === 'cancelled') {
-      return 'status-chip cancelled';
-    }
-
-    if (normalized === 'outfordelivery') {
-      return 'status-chip out-for-delivery';
-    }
-
-    if (normalized === 'preparing') {
-      return 'status-chip preparing';
-    }
-
-    if (normalized === 'confirmed') {
-      return 'status-chip confirmed';
-    }
-
-    return 'status-chip placed';
-  }
-
-  isStepCompleted(status: string, step: string): boolean {
-    const normalizedStatus = this.toCanonicalStatus(status);
-    const normalizedStep = this.toCanonicalStatus(step);
-
-    if (normalizedStatus === 'Cancelled') {
-      return false;
-    }
-
-    return this.orderProgressSteps.indexOf(normalizedStep) <= this.orderProgressSteps.indexOf(normalizedStatus);
-  }
-
-  isStepCurrent(status: string, step: string): boolean {
-    const normalizedStatus = this.toCanonicalStatus(status);
-    const normalizedStep = this.toCanonicalStatus(step);
-
-    if (normalizedStatus === 'Cancelled') {
-      return false;
-    }
-
-    return normalizedStatus === normalizedStep;
   }
 
   startEdit(item: MenuItem) {
@@ -430,6 +385,10 @@ export class Menu implements OnDestroy {
     } finally {
       this.orderLoadingId = null;
     }
+  }
+
+  setActiveUserSection(section: 'menu' | 'cart' | 'orders'): void {
+    this.activeUserSection = section;
   }
 
   private resolveImageUrl(imageUrl: string | null): string | null {

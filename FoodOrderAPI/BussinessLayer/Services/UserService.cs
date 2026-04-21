@@ -15,7 +15,7 @@ namespace BussinessLayer.Services
             _userRepository = userRepository;
         }
 
-        public async Task<UserProfileResponse> GetProfile(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<UserProfileResponse> GetProfile(Guid userId)
         {
             var user = await _userRepository.GetById(userId);
             if (user is null)
@@ -26,7 +26,7 @@ namespace BussinessLayer.Services
             return MapProfile(user);
         }
 
-        public async Task<UserProfileResponse> UpdateProfile(Guid userId, UserProfileUpdateRequest request, CancellationToken cancellationToken = default)
+        public async Task<UserProfileResponse> UpdateProfile(Guid userId, UserProfileUpdateRequest request)
         {
             var user = await _userRepository.GetById(userId);
             if (user is null)
@@ -67,7 +67,7 @@ namespace BussinessLayer.Services
             return MapProfile(user);
         }
 
-        public async Task<PaginationResponse<AdminUserListItemResponse>> GetUsers(PaginationRequest request, CancellationToken cancellationToken = default)
+        public async Task<PaginationResponse<AdminUserListItemResponse>> GetUsers(PaginationRequest request)
         {
             var pageNumber = request.PageNumber <= 0 ? 1 : request.PageNumber;
             var pageSize = request.PageSize <= 0 ? 10 : Math.Min(request.PageSize, 100);
@@ -106,7 +106,7 @@ namespace BussinessLayer.Services
                 query = query.OrderByDescending(x => x.CreatedAt);
             }
 
-            var totalCount = await query.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync();
             var totalPages = totalCount == 0 ? 0 : (int)Math.Ceiling(totalCount / (double)pageSize);
 
             var users = await query
@@ -123,7 +123,7 @@ namespace BussinessLayer.Services
                     CreatedAt = u.CreatedAt,
                     ProfileUrl = u.ProfileUrl
                 })
-                .ToListAsync(cancellationToken);
+                .ToListAsync();
 
             return new PaginationResponse<AdminUserListItemResponse>
             {

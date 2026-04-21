@@ -2,6 +2,7 @@
 using BussinessLayer;
 using DataAccessLayer;
 using DataAccessLayer.Data;
+using FoodOrderAPI.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -68,12 +69,13 @@ namespace FoodOrderAPI
                 });
             }
 
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCors("Angular");
             app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.MapControllers();
 
             using( var scope = app.Services.CreateScope())

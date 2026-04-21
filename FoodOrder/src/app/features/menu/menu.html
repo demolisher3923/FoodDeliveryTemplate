@@ -5,6 +5,18 @@
 			<p>Explore dishes, place orders, and manage menu items with role-based access.</p>
 		</div>
 
+		<div class="menu-layout">
+			@if (isUser()) {
+				<aside class="user-sidenav">
+					<h3>User Panel</h3>
+					<button type="button" [class.active]="activeUserSection === 'menu'" (click)="setActiveUserSection('menu')">Menu</button>
+					<button type="button" [class.active]="activeUserSection === 'cart'" (click)="setActiveUserSection('cart')">Cart</button>
+					<button type="button" [class.active]="activeUserSection === 'orders'" (click)="setActiveUserSection('orders')">My Orders</button>
+				</aside>
+			}
+
+			<div class="menu-content">
+
 		@if (errorMessage) {
 			<p class="error">{{ errorMessage }}</p>
 		}
@@ -68,86 +80,45 @@
 		</mat-card>
 		}
 
-		@if (loading) {
-			<p>Loading menu...</p>
-		} @else {
-			<div class="menu-grid" id="menu-grid-section">
-				@for (item of menuItems; track item.id) {
-					<app-menu-item-card
-						[item]="item"
-						[isAdmin]="isAdmin()"
-						[isUser]="isUser()"
-						[quantity]="itemQuantities[item.id]"
-						[isAdding]="orderLoadingId === item.id"
-						(edit)="startEdit($event)"
-						(remove)="deleteMenuItem($event)"
-						(decrement)="decrementQuantity($event)"
-						(increment)="incrementQuantity($event)"
-						(addToCart)="placeOrder($event)">
-					</app-menu-item-card>
-				}
-			</div>
-		}
-
-		@if (isUser()) {
-			<mat-card class="orders-card" id="cart-section">
-				<h3>My Cart</h3>
-				@if (cartItems.length === 0) {
-					<p>No items in cart yet.</p>
-				} @else {
-					<div class="orders-list">
-						@for (item of cartItems; track item.menuItemId) {
-							<div class="order-item">
-								<span>{{ item.menuItemName }} x {{ item.quantity }}</span>
-								<div class="cart-actions">
-									<span>₹{{ item.totalPrice }}</span>
-									<button mat-button color="warn" type="button" (click)="removeCartItem(item.menuItemId)">Remove</button>
-								</div>
-							</div>
-						}
-						<div class="checkout-row">
-							<strong>Total: ₹{{ cartTotal }}</strong>
-							<button mat-raised-button color="primary" [disabled]="orderLoadingId === 'checkout'" (click)="checkout()">
-								{{ orderLoadingId === 'checkout' ? 'Placing order...' : 'Checkout' }}
-							</button>
-						</div>
-					</div>
-				}
-			</mat-card>
-
-			<mat-card class="orders-card" id="orders-section">
-				<div class="orders-header">
-					<h3>Your Orders</h3>
-					<button mat-stroked-button color="primary" type="button" (click)="loadMyOrders()">Refresh</button>
+		@if (activeUserSection === 'menu' || !isUser()) {
+			@if (loading) {
+				<p>Loading menu...</p>
+			} @else {
+				<div class="menu-grid" id="menu-grid-section">
+					@for (item of menuItems; track item.id) {
+						<app-menu-item-card
+							[item]="item"
+							[isAdmin]="isAdmin()"
+							[isUser]="isUser()"
+							[quantity]="itemQuantities[item.id]"
+							[isAdding]="orderLoadingId === item.id"
+							(edit)="startEdit($event)"
+							(remove)="deleteMenuItem($event)"
+							(decrement)="decrementQuantity($event)"
+							(increment)="incrementQuantity($event)"
+							(addToCart)="placeOrder($event)">
+						</app-menu-item-card>
+					}
 				</div>
-
-				@if (myOrders.length === 0) {
-					<p>You have not placed any orders yet.</p>
-				} @else {
-					<div class="my-orders-list">
-						@for (order of myOrders; track order.orderId) {
-							<div class="my-order-item">
-								<div class="my-order-row">
-									<strong>{{ order.menuItemName }}</strong>
-									<span>Qty: {{ order.quantity }}</span>
-									<span>Total: ₹{{ order.totalPrice }}</span>
-									<span [class]="getOrderStatusChipClass(order.status)">{{ order.status }}</span>
-								</div>
-
-								@if (order.status !== 'Cancelled') {
-									<div class="progress-row">
-										@for (step of orderProgressSteps; track step) {
-											<div class="progress-step" [class.completed]="isStepCompleted(order.status, step)" [class.current]="isStepCurrent(order.status, step)">
-												<span class="dot"></span>
-												<span class="step-label">{{ step }}</span>
-											</div>
-										}
-									</div>
-								}
-							</div>
-						}
-					</div>
-				}
-			</mat-card>
+			}
 		}
+
+		@if (isUser() && activeUserSection === 'cart') {
+			<app-user-cart
+				[cartItems]="cartItems"
+				[cartTotal]="cartTotal"
+				[isCheckingOut]="orderLoadingId === 'checkout'"
+				(itemRemoved)="removeCartItem($event)"
+				(checkoutClicked)="checkout()">
+			</app-user-cart>
+    }
+
+		@if (isUser() && activeUserSection === 'orders') {
+			<app-user-orders
+				[myOrders]="myOrders"
+				(refreshClicked)="loadMyOrders()">
+			</app-user-orders>
+		}
+			</div>
+		</div>
 </section>

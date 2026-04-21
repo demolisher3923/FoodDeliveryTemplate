@@ -1,0 +1,34 @@
+<mat-card class="orders-card" id="orders-section">
+  <div class="orders-header">
+    <h3>Your Orders</h3>
+    <button mat-stroked-button color="primary" type="button" (click)="refreshClicked.emit()">Refresh</button>
+  </div>
+
+  @if (myOrders.length === 0) {
+    <p>You have not placed any orders yet.</p>
+  } @else {
+    <div class="my-orders-list">
+      @for (order of myOrders; track order.orderId) {
+        <div class="my-order-item">
+          <div class="my-order-row">
+            <strong>{{ order.menuItemName }}</strong>
+            <span>Qty: {{ order.quantity }}</span>
+            <span>Total: ₹{{ order.totalPrice }}</span>
+            <span [class]="getOrderStatusChipClass(order.status)">{{ order.status }}</span>
+          </div>
+
+          @if (order.status !== 'Cancelled') {
+            <div class="progress-row">
+              @for (step of orderProgressSteps; track step) {
+                <div class="progress-step" [class.completed]="isStepCompleted(order.status, step)" [class.current]="isStepCurrent(order.status, step)">
+                  <span class="dot"></span>
+                  <span class="step-label">{{ step }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</mat-card>

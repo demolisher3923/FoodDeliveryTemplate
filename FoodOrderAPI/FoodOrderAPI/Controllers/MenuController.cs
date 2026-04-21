@@ -22,15 +22,15 @@ namespace FoodOrderAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<MenuItemResponse>>> GetMenu(CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyList<MenuItemResponse>>> GetMenu()
         {
-            var menu = await _menuService.GetMenu(cancellationToken);
+            var menu = await _menuService.GetMenu();
             return Ok(menu);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<MenuItemResponse>> CreateMenuItem([FromForm] MenuItemRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<MenuItemResponse>> CreateMenuItem([FromForm] MenuItemRequest request)
         {
             if (request.ImageFile is not null)
             {
@@ -40,17 +40,17 @@ namespace FoodOrderAPI.Controllers
                     return BadRequest(imageValidationError);
                 }
 
-                request.ImageUrl = await SaveProductImageAsync(request.ImageFile, cancellationToken);
+                request.ImageUrl = await SaveProductImageAsync(request.ImageFile);
             }
 
             var createdBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
-            var created = await _menuService.CreateMenuItem(request, createdBy, cancellationToken);
+            var created = await _menuService.CreateMenuItem(request, createdBy);
             return Ok(created);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<MenuItemResponse>> UpdateMenuItem(Guid id, [FromForm] MenuItemRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<MenuItemResponse>> UpdateMenuItem(Guid id, [FromForm] MenuItemRequest request)
         {
             try
             {
@@ -62,11 +62,11 @@ namespace FoodOrderAPI.Controllers
                         return BadRequest(imageValidationError);
                     }
 
-                    request.ImageUrl = await SaveProductImageAsync(request.ImageFile, cancellationToken);
+                    request.ImageUrl = await SaveProductImageAsync(request.ImageFile);
                 }
 
                 var updatedBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
-                var updated = await _menuService.UpdateMenuItem(id, request, updatedBy, cancellationToken);
+                var updated = await _menuService.UpdateMenuItem(id, request, updatedBy);
                 return Ok(updated);
             }
             catch (KeyNotFoundException ex)
@@ -77,12 +77,12 @@ namespace FoodOrderAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteMenuItem(Guid id, CancellationToken cancellationToken)
+        public async Task<ActionResult> DeleteMenuItem(Guid id)
         {
             try
             {
                 var updatedBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
-                await _menuService.DeleteMenuItem(id, updatedBy, cancellationToken);
+            await _menuService.DeleteMenuItem(id, updatedBy);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
@@ -93,7 +93,7 @@ namespace FoodOrderAPI.Controllers
 
         [Authorize(Roles = "User")]
         [HttpPost("{menuItemId:guid}/order")]
-        public async Task<ActionResult<OrderResponse>> PlaceOrder(Guid menuItemId, [FromBody] PlaceOrderRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<OrderResponse>> PlaceOrder(Guid menuItemId, [FromBody] PlaceOrderRequest request)
         {
             if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
             {
@@ -102,7 +102,7 @@ namespace FoodOrderAPI.Controllers
 
             try
             {
-                var response = await _menuService.PlaceOrder(menuItemId, userId, request, cancellationToken);
+                var response = await _menuService.PlaceOrder(menuItemId, userId, request);
                 return Ok(response);
             }
             catch (InvalidOperationException ex)
@@ -113,33 +113,33 @@ namespace FoodOrderAPI.Controllers
 
         [Authorize(Roles = "User")]
         [HttpGet("my-orders")]
-        public async Task<ActionResult<IReadOnlyList<OrderResponse>>> GetMyOrders(CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyList<OrderResponse>>> GetMyOrders()
         {
             if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
             {
                 return Unauthorized("Invalid user context.");
             }
 
-            var orders = await _menuService.GetMyOrders(userId, cancellationToken);
+            var orders = await _menuService.GetMyOrders(userId);
             return Ok(orders);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet("admin-orders")]
-        public async Task<ActionResult<IReadOnlyList<AdminOrderResponse>>> GetAdminOrders(CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyList<AdminOrderResponse>>> GetAdminOrders()
         {
-            var orders = await _menuService.GetAllOrders(cancellationToken);
+            var orders = await _menuService.GetAllOrders();
             return Ok(orders);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut("admin-orders/{orderId:guid}/status")]
-        public async Task<ActionResult<AdminOrderResponse>> UpdateOrderStatus(Guid orderId, [FromBody] UpdateOrderStatusRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<AdminOrderResponse>> UpdateOrderStatus(Guid orderId, [FromBody] UpdateOrderStatusRequest request)
         {
             try
             {
                 var updatedBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
-                var order = await _menuService.UpdateOrderStatus(orderId, request.Status, updatedBy, cancellationToken);
+            var order = await _menuService.UpdateOrderStatus(orderId, request.Status, updatedBy);
                 return Ok(order);
             }
             catch (KeyNotFoundException ex)
@@ -167,7 +167,7 @@ namespace FoodOrderAPI.Controllers
             return null;
         }
 
-        private async Task<string> SaveProductImageAsync(IFormFile file, CancellationToken cancellationToken)
+        private async Task<string> SaveProductImageAsync(IFormFile file)
         {
             var webRootPath = _environment.WebRootPath;
             if (string.IsNullOrWhiteSpace(webRootPath))
@@ -183,7 +183,7 @@ namespace FoodOrderAPI.Controllers
             var filePath = Path.Combine(uploadsDirectory, uniqueFileName);
 
             await using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream, cancellationToken);
+            await file.CopyToAsync(stream);
 
             return $"/uploads/products/{uniqueFileName}";
         }

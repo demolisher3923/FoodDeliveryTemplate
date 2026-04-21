@@ -1,44 +1,29 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, inject } from '@angular/core';
 import { UserService } from '../../../core/services/user-service';
 import { AdminUserListItem } from '../../../models/user.model';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { ToastService } from '../../../core/services/toast-service';
 import { CommonModule } from '@angular/common';
 import { MenuService } from '../../../core/services/menu-service';
 import { AdminOrderResponse } from '../../../models/menu.model';
 import { HttpErrorResponse } from '@angular/common/http';
-import Chart from 'chart.js/auto';
+import { AdminDashboardPanel } from './components/dashboard/dashboard';
+import { AdminUsersTable } from './components/users-table/users-table';
+import { AdminOrdersTable } from './components/orders-table/orders-table';
 
 @Component({
   selector: 'app-admin-menu',
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, AdminDashboardPanel, AdminUsersTable, AdminOrdersTable],
   templateUrl: './admin-menu.html',
   styleUrl: './admin-menu.css',
 })
-export class AdminMenu implements AfterViewInit, OnDestroy {
+export class AdminMenu {
   private static readonly STATUS_DRAFTS_STORAGE_KEY = 'food-order-admin-status-drafts';
   private static readonly ORDERS_UPDATED_EVENT_KEY = 'food-order-orders-updated-at';
   private readonly userService = inject(UserService);
   private readonly menuService = inject(MenuService);
   private readonly fb = inject(FormBuilder);
   private readonly toastService = inject(ToastService);
-
-  @ViewChild('kpiChart') kpiChartRef?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('ordersChart') ordersChartRef?: ElementRef<HTMLCanvasElement>;
-  private kpiChart?: Chart;
-  private ordersChart?: Chart;
-  private chartsReady = false;
 
   todaysOrdersCount = 0;
   todaysRevenue = 0;
@@ -62,6 +47,7 @@ export class AdminMenu implements AfterViewInit, OnDestroy {
   ordersTotalPages = 0;
   sortBy = 'createdAt';
   sortDirection: 'asc' | 'desc' = 'desc';
+  activeSection: 'dashboard' | 'users' | 'orders' = 'dashboard';
 
   readonly searchForm = this.fb.group({
     search: [''],
@@ -71,16 +57,6 @@ export class AdminMenu implements AfterViewInit, OnDestroy {
     this.loadDraftsFromStorage();
     this.loadUsers();
     this.loadOrders();
-  }
-
-  ngAfterViewInit(): void {
-    this.chartsReady = true;
-    this.renderCharts();
-  }
-
-  ngOnDestroy(): void {
-    this.kpiChart?.destroy();
-    this.ordersChart?.destroy();
   }
 
   loadUsers() {
@@ -101,7 +77,6 @@ export class AdminMenu implements AfterViewInit, OnDestroy {
           this.totalCount = response.totalCount;
           this.totalPages = response.totalPages;
           this.pageNumber = response.pageNumber;
-          this.renderCharts();
         },
         error: (error: HttpErrorResponse) => {
           this.loadingUsers = false;
@@ -144,7 +119,6 @@ export class AdminMenu implements AfterViewInit, OnDestroy {
         }
 
         this.saveDraftsToStorage();
-        this.renderCharts();
       },
       error: () => {
         this.loadingOrders = false;
@@ -274,7 +248,6 @@ export class AdminMenu implements AfterViewInit, OnDestroy {
         this.orderStatusDrafts[normalizedOrder.orderId] = normalizedOrder.status;
         this.saveDraftsToStorage();
         localStorage.setItem(AdminMenu.ORDERS_UPDATED_EVENT_KEY, Date.now().toString());
-        this.renderCharts();
         this.loadOrders();
         this.toastService.success('Order status updated.');
       },
@@ -289,6 +262,10 @@ export class AdminMenu implements AfterViewInit, OnDestroy {
   onStatusDraftChange(orderId: string, status: string) {
     this.orderStatusDrafts[orderId] = this.normalizeStatus(status);
     this.saveDraftsToStorage();
+  }
+
+  setActiveSection(section: 'dashboard' | 'users' | 'orders'): void {
+    this.activeSection = section;
   }
 
   getStatusChipClass(status: string): string {
@@ -385,58 +362,5 @@ export class AdminMenu implements AfterViewInit, OnDestroy {
     return value.getFullYear() === today.getFullYear()
       && value.getMonth() === today.getMonth()
       && value.getDate() === today.getDate();
-  }
-
-  private renderCharts(): void {
-    if (!this.chartsReady || !this.kpiChartRef || !this.ordersChartRef) {
-      return;
-    }
-
-    this.kpiChart?.destroy();
-    this.ordersChart?.destroy();
-
-    this.kpiChart = new Chart(this.kpiChartRef.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: ['Today Orders', 'Today Revenue', 'Active Users (Page)'],
-        datasets: [
-          {
-            label: 'Realtime Metrics',
-            data: [this.todaysOrdersCount, this.todaysRevenue, this.activeUsersCount],
-            backgroundColor: ['#2563eb', '#16a34a', '#f59e0b'],
-            borderRadius: 6,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-        },
-      },
-    });
-
-    const statusCounts = this.orderStatusOptions.map(
-      (status) => this.orders.filter((x) => this.normalizeStatus(x.status) === status).length,
-    );
-
-    this.ordersChart = new Chart(this.ordersChartRef.nativeElement, {
-      type: 'doughnut',
-      data: {
-        labels: this.orderStatusOptions,
-        datasets: [
-          {
-            label: 'Order Status',
-            data: statusCounts,
-            backgroundColor: ['#2563eb', '#06b6d4', '#f59e0b', '#7c3aed', '#16a34a', '#dc2626'],
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-      },
-    });
   }
 }

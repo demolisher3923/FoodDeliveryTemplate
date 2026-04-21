@@ -1,0 +1,68 @@
+<mat-card class="users-card" id="users-section">
+  <div class="users-header">
+    <h3>Users</h3>
+    <form [formGroup]="searchForm" class="search-row" (ngSubmit)="searchApplied.emit()">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search user</mat-label>
+        <input matInput formControlName="search" placeholder="name, email or mobile" />
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">Search</button>
+      <button mat-button type="button" (click)="searchCleared.emit()">Clear</button>
+      <label class="table-size">
+        <span>Page Size</span>
+        <select [value]="pageSize" (change)="pageSizeChanged.emit($any($event.target).value)">
+          @for (size of pageSizeOptions; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </label>
+    </form>
+  </div>
+
+  @if (loadingUsers) {
+    <p>Loading users...</p>
+  } @else {
+    <div class="table-wrap">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Sr No</th>
+            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('fullName')">Full Name</button></th>
+            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('email')">Email</button></th>
+            <th>Mobile</th>
+            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('role')">Role</button></th>
+            <th>Status</th>
+            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('createdAt')">Created</button></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users; track user.userId; let index = $index) {
+            <tr>
+              <td>{{ ((pageNumber - 1) * pageSize) + index + 1 }}</td>
+              <td>{{ user.fullName }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.mobileNumber }}</td>
+              <td>{{ user.role }}</td>
+              <td>{{ user.isActive ? 'Active' : 'Inactive' }}</td>
+              <td>{{ user.createdAt | date:'mediumDate' }}</td>
+            </tr>
+          }
+          @if (users.length === 0) {
+            <tr>
+              <td colspan="7" class="empty-row">No users found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-row">
+      <span>Showing page {{ pageNumber }} of {{ totalPages || 1 }} ({{ totalCount }} users)</span>
+      <div class="pager-actions">
+        @for (page of pageNumbers; track page) {
+          <button mat-stroked-button [class.active-page]="page === pageNumber" (click)="pageChanged.emit(page)">{{ page }}</button>
+        }
+      </div>
+    </div>
+  }
+</mat-card>

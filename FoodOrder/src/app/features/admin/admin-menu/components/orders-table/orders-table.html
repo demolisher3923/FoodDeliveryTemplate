@@ -1,0 +1,80 @@
+<mat-card class="users-card" id="orders-section">
+  <div class="users-header">
+    <h3>Orders</h3>
+    <div class="orders-actions">
+      <label class="table-size">
+        <span>Page Size</span>
+        <select [value]="ordersPageSize" (change)="orderPageSizeChanged.emit($any($event.target).value)">
+          @for (size of pageSizeOptions; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </label>
+      <button mat-stroked-button color="primary" (click)="refreshOrders.emit()">Refresh Orders</button>
+    </div>
+  </div>
+
+  @if (loadingOrders) {
+    <p>Loading orders...</p>
+  } @else {
+    <div class="table-wrap">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Sr No</th>
+            <th>User</th>
+            <th>Email</th>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Update Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of pagedOrders; track order.orderId; let index = $index) {
+            <tr>
+              <td>{{ ((ordersPageNumber - 1) * ordersPageSize) + index + 1 }}</td>
+              <td>{{ order.userName }}</td>
+              <td>{{ order.userEmail }}</td>
+              <td>{{ order.menuItemName }}</td>
+              <td>{{ order.quantity }}</td>
+              <td>₹{{ order.totalPrice }}</td>
+              <td>
+                <span [class]="getStatusChipClass(order.status)">{{ order.status }}</span>
+              </td>
+              <td>
+                <div class="status-editor">
+                  <select [value]="orderStatusDrafts[order.orderId]" (change)="statusDraftChanged.emit({ orderId: order.orderId, status: $any($event.target).value })">
+                    @for (status of orderStatusOptions; track status) {
+                      <option [value]="status">{{ status }}</option>
+                    }
+                  </select>
+                  <button mat-button color="primary" type="button" [disabled]="updatingOrderId === order.orderId" (click)="statusSaved.emit(order)">
+                    {{ updatingOrderId === order.orderId ? 'Saving...' : 'Save' }}
+                  </button>
+                </div>
+              </td>
+              <td>{{ order.createdAt | date:'medium' }}</td>
+            </tr>
+          }
+          @if (pagedOrders.length === 0) {
+            <tr>
+              <td colspan="9" class="empty-row">No orders found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-row">
+      <span>Showing page {{ ordersPageNumber }} of {{ ordersTotalPages || 1 }} ({{ ordersCount }} orders)</span>
+      <div class="pager-actions">
+        @for (page of orderPageNumbers; track page) {
+          <button mat-stroked-button [class.active-page]="page === ordersPageNumber" (click)="ordersPageChanged.emit(page)">{{ page }}</button>
+        }
+      </div>
+    </div>
+  }
+</mat-card>

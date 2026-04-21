@@ -1,28 +1,23 @@
 using BussinessLayer.Interface;
-using DataAccessLayer.Data;
 using DataAccessLayer.Dto.Menu;
+using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace BussinessLayer.Services
 {
     public class MenuService : IMenuService
     {
-        private readonly FoodDbContext _context;
+        private readonly IMenuRepository _menuRepository;
         private static readonly string[] AllowedOrderStatuses = new[] { "Placed", "Confirmed", "Preparing", "OutForDelivery", "Delivered", "Cancelled" };
 
-        public MenuService(FoodDbContext context)
+        public MenuService(IMenuRepository menuRepository)
         {
-            _context = context;
+            _menuRepository = menuRepository;
         }
 
-        public async Task<IReadOnlyList<MenuItemResponse>> GetMenu(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<MenuItemResponse>> GetMenu()
         {
-            var menuItems = await _context.MenuItems
-                .AsNoTracking()
-                .Where(x => x.IsActive)
-                .OrderBy(x => x.Name)
-                .ToListAsync(cancellationToken);
+            var menuItems = await _menuRepository.GetActiveMenuItems();
 
             var response = new List<MenuItemResponse>();
             foreach (var item in menuItems)
@@ -43,7 +38,7 @@ namespace BussinessLayer.Services
             return response;
         }
 
-        public async Task<MenuItemResponse> CreateMenuItem(MenuItemRequest request, string createdBy, CancellationToken cancellationToken = default)
+        public async Task<MenuItemResponse> CreateMenuItem(MenuItemRequest request, string createdBy)
         {
             var menuItem = new MenuItem
             {
@@ -57,8 +52,8 @@ namespace BussinessLayer.Services
                 CreatedBy = createdBy
             };
 
-            _context.MenuItems.Add(menuItem);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _menuRepository.AddMenuItem(menuItem);
+            await _menuRepository.SaveChanges();
 
             return new MenuItemResponse
             {
@@ -73,9 +68,9 @@ namespace BussinessLayer.Services
             };
         }
 
-        public async Task<MenuItemResponse> UpdateMenuItem(Guid id, MenuItemRequest request, string updatedBy, CancellationToken cancellationToken = default)
+        public async Task<MenuItemResponse> UpdateMenuItem(Guid id, MenuItemRequest request, string updatedBy)
         {
-            var menuItem = await _context.MenuItems.FirstOrDefaultAsync(x => x.Id == id && x.IsActive, cancellationToken);
+            var menuItem = await _menuRepository.GetActiveMenuItemById(id);
             if (menuItem is null)
             {
                 throw new KeyNotFoundException("Menu item not found.");
@@ -91,7 +86,7 @@ namespace BussinessLayer.Services
             menuItem.UpdatedAt = DateTime.UtcNow;
             menuItem.UpdatedBy = updatedBy;
 
-            await _context.SaveChangesAsync(cancellationToken);
+            await _menuRepository.SaveChanges();
             return new MenuItemResponse
             {
                 Id = menuItem.Id,
@@ -105,9 +100,9 @@ namespace BussinessLayer.Services
             };
         }
 
-        public async Task DeleteMenuItem(Guid id, string updatedBy, CancellationToken cancellationToken = default)
+        public async Task DeleteMenuItem(Guid id, string updatedBy)
         {
-            var menuItem = await _context.MenuItems.FirstOrDefaultAsync(x => x.Id == id && x.IsActive, cancellationToken);
+            var menuItem = await _menuRepository.GetActiveMenuItemById(id);
             if (menuItem is null)
             {
                 throw new KeyNotFoundException("Menu item not found.");
@@ -117,17 +112,17 @@ namespace BussinessLayer.Services
             menuItem.IsAvailable = false;
             menuItem.UpdatedAt = DateTime.UtcNow;
             menuItem.UpdatedBy = updatedBy;
-            await _context.SaveChangesAsync(cancellationToken);
+            await _menuRepository.SaveChanges();
         }
 
-        public async Task<OrderResponse> PlaceOrder(Guid menuItemId, Guid userId, PlaceOrderRequest request, CancellationToken cancellationToken = default)
+        public async Task<OrderResponse> PlaceOrder(Guid menuItemId, Guid userId, PlaceOrderRequest request)
         {
             if (request.Quantity < 1)
             {
                 throw new InvalidOperationException("Quantity must be at least 1.");
             }
 
-            var menuItem = await _context.MenuItems.FirstOrDefaultAsync(x => x.Id == menuItemId && x.IsActive, cancellationToken);
+            var menuItem = await _menuRepository.GetActiveMenuItemById(menuItemId);
             if (menuItem is null || !menuItem.IsAvailable)
             {
                 throw new InvalidOperationException("Selected menu item is not available.");
@@ -155,8 +150,8 @@ namespace BussinessLayer.Services
                 CreatedBy = userId.ToString()
             };
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _menuRepository.AddOrder(order);
+            await _menuRepository.SaveChanges();
 
             return new OrderResponse
             {
@@ -171,13 +166,9 @@ namespace BussinessLayer.Services
             };
         }
 
-        public async Task<IReadOnlyList<OrderResponse>> GetMyOrders(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<OrderResponse>> GetMyOrders(Guid userId)
         {
-            var orders = await _context.Orders
-                .AsNoTracking()
-                .Where(x => x.UserId == userId && x.IsActive)
-                .OrderByDescending(x => x.CreatedAt)
-                .ToListAsync(cancellationToken);
+            var orders = await _menuRepository.GetActiveOrdersByUser(userId);
 
             var response = new List<OrderResponse>();
             foreach (var order in orders)
@@ -198,13 +189,9 @@ namespace BussinessLayer.Services
             return response;
         }
 
-        public async Task<IReadOnlyList<AdminOrderResponse>> GetAllOrders(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<AdminOrderResponse>> GetAllOrders()
         {
-            var orders = await _context.Orders
-                .AsNoTracking()
-                .Where(x => x.IsActive)
-                .OrderByDescending(x => x.CreatedAt)
-                .ToListAsync(cancellationToken);
+            var orders = await _menuRepository.GetAllActiveOrders();
 
             var response = new List<AdminOrderResponse>();
             foreach (var order in orders)
@@ -228,7 +215,7 @@ namespace BussinessLayer.Services
             return response;
         }
 
-        public async Task<AdminOrderResponse> UpdateOrderStatus(Guid orderId, string status, string updatedBy, CancellationToken cancellationToken = default)
+        public async Task<AdminOrderResponse> UpdateOrderStatus(Guid orderId, string status, string updatedBy)
         {
             var normalizedStatus = status?.Trim();
             var isValidStatus = false;
@@ -252,10 +239,7 @@ namespace BussinessLayer.Services
 
             var finalStatus = normalizedStatus!;
 
-            var order = await _context.Orders
-                .Include(x => x.User)
-                .Include(x => x.MenuItem)
-                .FirstOrDefaultAsync(x => x.Id == orderId && x.IsActive, cancellationToken);
+            var order = await _menuRepository.GetActiveOrderById(orderId);
 
             if (order is null)
             {
@@ -265,7 +249,7 @@ namespace BussinessLayer.Services
             order.Status = finalStatus;
             order.UpdatedAt = DateTime.UtcNow;
             order.UpdatedBy = updatedBy;
-            await _context.SaveChangesAsync(cancellationToken);
+            await _menuRepository.SaveChanges();
 
             return new AdminOrderResponse
             {

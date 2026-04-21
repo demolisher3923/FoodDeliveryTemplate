@@ -1,0 +1,43 @@
+<div class="intro" id="dashboard-section">
+  <h2>Admin Dashboard</h2>
+  <p>Track your restaurant performance and jump into key management tasks quickly.</p>
+</div>
+
+<div class="stats-grid">
+  <mat-card class="stat-card">
+    <h3>Today's Orders</h3>
+    <div class="value-row">
+      <span class="value">{{ todaysOrdersCount }}</span>
+    </div>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <h3>Today's Revenue</h3>
+    <div class="value-row">
+      <span class="value">₹{{ todaysRevenue }}</span>
+    </div>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <h3>Active Users (Current Page)</h3>
+    <div class="value-row">
+      <span class="value">{{ activeUsersCount }}</span>
+    </div>
+  </mat-card>
+</div>
+
+<div class="charts-grid">
+  <mat-card class="chart-card">
+    <h3>Realtime KPI Chart</h3>
+    <div class="chart-wrap">
+      <canvas #kpiChart></canvas>
+    </div>
+  </mat-card>
+
+  <mat-card class="chart-card">
+    <h3>Orders by Status</h3>
+    <div class="chart-wrap">
+      <canvas #ordersChart></canvas>
+    </div>
+  </mat-card>
+</div>

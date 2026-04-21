@@ -1,0 +1,140 @@
+.orders-card {
+  margin-top: 16px;
+  padding: 14px;
+}
+
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.my-orders-list {
+  display: grid;
+  gap: 10px;
+}
+
+.my-order-item {
+  padding: 10px;
+  border: 1px solid #dbe4ed;
+  border-radius: 10px;
+}
+
+.my-order-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.status-chip.placed {
+  background: #e5edff;
+  color: #254aa5;
+}
+
+.status-chip.confirmed {
+  background: #dbf3ff;
+  color: #03658c;
+}
+
+.status-chip.preparing {
+  background: #fff1db;
+  color: #a56300;
+}
+
+.status-chip.out-for-delivery {
+  background: #ede5ff;
+  color: #5f3bb5;
+}
+
+.status-chip.delivered {
+  background: #dff6e5;
+  color: #1f7a33;
+}
+
+.status-chip.cancelled {
+  background: #ffe1e1;
+  color: #b00020;
+}
+
+.progress-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(100px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.progress-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #7a8997;
+}
+
+.progress-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: calc(50% + 8px);
+  width: calc(100% - 16px);
+  height: 1px;
+  background: #c9d5e2;
+}
+
+.progress-step .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #c9d5e2;
+}
+
+.progress-step.completed {
+  color: #1f7a33;
+}
+
+.progress-step.completed .dot {
+  background: #1f7a33;
+}
+
+.progress-step.completed:not(:last-child)::after {
+  background: #1f7a33;
+}
+
+.progress-step.current {
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+.progress-step.current .dot {
+  background: #1d4ed8;
+}
+
+.step-label {
+  font-size: 0.76rem;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .progress-row {
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+  }
+
+  .progress-step:not(:last-child)::after {
+    display: none;
+  }
+}

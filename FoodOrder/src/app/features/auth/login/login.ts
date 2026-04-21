@@ -48,7 +48,7 @@ export class Login {
       next:(response) =>{
         this.loading = false;
         this.toastService.success('Signed in successfully.');
-        this.router.navigate([response.role === "Admin" ? "/admin/menu": "/menu"]);
+        this.router.navigate([response.role === "Admin" ? "/admin/dashboard": "/menu"]);
       },
       error:() => {
         this.loading = false;
