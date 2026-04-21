@@ -44,7 +44,10 @@ export class AdminMenu {
   totalPages = 0;
   ordersPageNumber = 1;
   ordersPageSize = 8;
+  ordersTotalCount = 0;
   ordersTotalPages = 0;
+  ordersSortBy = 'createdAt';
+  ordersSortDirection: 'asc' | 'desc' = 'desc';
   sortBy = 'createdAt';
   sortDirection: 'asc' | 'desc' = 'desc';
   activeSection: 'dashboard' | 'users' | 'orders' = 'dashboard';
@@ -53,10 +56,15 @@ export class AdminMenu {
     search: [''],
   });
 
+  readonly orderSearchForm = this.fb.group({
+    search: [''],
+  });
+
   constructor() {
     this.loadDraftsFromStorage();
     this.loadUsers();
     this.loadOrders();
+    this.loadOrdersPage();
   }
 
   loadUsers() {
@@ -105,7 +113,6 @@ export class AdminMenu {
           status: this.normalizeStatus(order.status),
         }));
         this.updateTodayStats();
-        this.refreshOrdersTablePage();
 
         const activeOrderIds = new Set(this.orders.map((x) => x.orderId));
         for (const orderId of Object.keys(this.orderStatusDrafts)) {
@@ -125,6 +132,42 @@ export class AdminMenu {
         this.toastService.error('Unable to load orders list.');
       },
     });
+  }
+
+  loadOrdersPage() {
+    this.loadingOrders = true;
+    this.menuService
+      .getPagedAdminOrders({
+        pageNumber: this.ordersPageNumber,
+        pageSize: this.ordersPageSize,
+        search: this.orderSearchForm.value.search ?? '',
+        sortBy: this.ordersSortBy,
+        sortDirection: this.ordersSortDirection,
+      })
+      .subscribe({
+        next: (response) => {
+          this.loadingOrders = false;
+          this.pagedOrders = response.items.map((order) => ({
+            ...order,
+            status: this.normalizeStatus(order.status),
+          }));
+          this.ordersTotalCount = response.totalCount;
+          this.ordersTotalPages = response.totalPages;
+          this.ordersPageNumber = response.pageNumber;
+
+          for (const order of this.pagedOrders) {
+            if (!this.orderStatusDrafts[order.orderId]) {
+              this.orderStatusDrafts[order.orderId] = order.status;
+            }
+          }
+
+          this.saveDraftsToStorage();
+        },
+        error: () => {
+          this.loadingOrders = false;
+          this.toastService.error('Unable to load orders list.');
+        },
+      });
   }
 
   applySearch() {
@@ -193,7 +236,7 @@ export class AdminMenu {
 
     this.ordersPageSize = parsed;
     this.ordersPageNumber = 1;
-    this.refreshOrdersTablePage();
+    this.loadOrdersPage();
   }
 
   goToOrdersPage(page: number) {
@@ -202,7 +245,7 @@ export class AdminMenu {
     }
 
     this.ordersPageNumber = page;
-    this.refreshOrdersTablePage();
+    this.loadOrdersPage();
   }
 
   get orderPageNumbers(): number[] {
@@ -218,6 +261,29 @@ export class AdminMenu {
     }
 
     return numbers;
+  }
+
+  applyOrderSearch() {
+    this.ordersPageNumber = 1;
+    this.loadOrdersPage();
+  }
+
+  clearOrderSearch() {
+    this.orderSearchForm.patchValue({ search: '' });
+    this.ordersPageNumber = 1;
+    this.loadOrdersPage();
+  }
+
+  changeOrderSort(column: string) {
+    if (this.ordersSortBy === column) {
+      this.ordersSortDirection = this.ordersSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.ordersSortBy = column;
+      this.ordersSortDirection = 'asc';
+    }
+
+    this.ordersPageNumber = 1;
+    this.loadOrdersPage();
   }
 
   updateOrderStatus(order: AdminOrderResponse) {
@@ -243,12 +309,13 @@ export class AdminMenu {
         this.updatingOrderId = null;
         const normalizedOrder = { ...updatedOrder, status: this.normalizeStatus(updatedOrder.status) };
         this.orders = this.orders.map((x) => (x.orderId === normalizedOrder.orderId ? normalizedOrder : x));
+        this.pagedOrders = this.pagedOrders.map((x) => (x.orderId === normalizedOrder.orderId ? normalizedOrder : x));
         this.updateTodayStats();
-        this.refreshOrdersTablePage();
         this.orderStatusDrafts[normalizedOrder.orderId] = normalizedOrder.status;
         this.saveDraftsToStorage();
         localStorage.setItem(AdminMenu.ORDERS_UPDATED_EVENT_KEY, Date.now().toString());
         this.loadOrders();
+        this.loadOrdersPage();
         this.toastService.success('Order status updated.');
       },
       error: (error: HttpErrorResponse) => {
@@ -338,16 +405,6 @@ export class AdminMenu {
     }
 
     return null;
-  }
-
-  private refreshOrdersTablePage(): void {
-    this.ordersTotalPages = Math.max(1, Math.ceil(this.orders.length / this.ordersPageSize));
-    if (this.ordersPageNumber > this.ordersTotalPages) {
-      this.ordersPageNumber = this.ordersTotalPages;
-    }
-
-    const start = (this.ordersPageNumber - 1) * this.ordersPageSize;
-    this.pagedOrders = this.orders.slice(start, start + this.ordersPageSize);
   }
 
   private updateTodayStats(): void {

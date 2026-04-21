@@ -1,4 +1,5 @@
 using BussinessLayer.Interface;
+using DataAccessLayer.Dto.Common;
 using DataAccessLayer.Dto.Menu;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
@@ -213,6 +214,11 @@ namespace BussinessLayer.Services
             }
 
             return response;
+        }
+
+        public Task<PaginationResponse<AdminOrderResponse>> GetPagedOrders(PaginationRequest request)
+        {
+            return _menuRepository.GetPagedActiveOrders(request);
         }
 
         public async Task<AdminOrderResponse> UpdateOrderStatus(Guid orderId, string status, string updatedBy)

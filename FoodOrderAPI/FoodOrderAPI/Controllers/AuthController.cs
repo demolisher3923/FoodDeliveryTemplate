@@ -63,7 +63,7 @@ namespace FoodOrderAPI.Controllers
                     return BadRequest("Profile image size must be less than or equal to 5 MB.");
                 }
 
-                request.ProfileUrl = await SaveProfileImageAsync(request.ProfileImage, cancellationToken);
+                request.ProfileUrl = await SaveProfileImage(request.ProfileImage, cancellationToken);
             }
 
             try
@@ -91,7 +91,7 @@ namespace FoodOrderAPI.Controllers
             }
         }
 
-        private async Task<string> SaveProfileImageAsync(IFormFile file, CancellationToken cancellationToken)
+        private async Task<string> SaveProfileImage(IFormFile file, CancellationToken cancellationToken)
         {
             var webRootPath = _environment.WebRootPath;
             if (string.IsNullOrWhiteSpace(webRootPath))

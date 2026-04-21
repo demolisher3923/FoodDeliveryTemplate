@@ -77,7 +77,7 @@ namespace FoodOrderAPI.Controllers
                     return BadRequest("Profile image size must be less than or equal to 5 MB.");
                 }
 
-                request.ProfileUrl = await SaveProfileImageAsync(request.ProfileImage);
+                request.ProfileUrl = await SaveProfileImage(request.ProfileImage);
             }
 
             var profile = await _userService.UpdateProfile(userId, request);
@@ -95,7 +95,7 @@ namespace FoodOrderAPI.Controllers
             return userId;
         }
 
-        private async Task<string> SaveProfileImageAsync(IFormFile file)
+        private async Task<string> SaveProfileImage(IFormFile file)
         {
             var webRootPath = _environment.WebRootPath;
             if (string.IsNullOrWhiteSpace(webRootPath))
@@ -144,7 +144,6 @@ namespace FoodOrderAPI.Controllers
                     }
                 }
             }
-
             return parsedInterests;
         }
     }

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { AdminOrderResponse, MenuItem, MenuItemRequest, OrderResponse, PlaceOrderRequest, UpdateOrderStatusRequest } from '../../models/menu.model';
+import { PaginationRequest, PaginationResponse } from '../../models/pagination.model';
 
 @Injectable({ providedIn: 'root' })
 export class MenuService {
@@ -33,6 +34,18 @@ export class MenuService {
 
   getAdminOrders() {
     return this.http.get<AdminOrderResponse[]>(`${environment.apiUrl}/Menu/admin-orders`);
+  }
+
+  getPagedAdminOrders(request: PaginationRequest) {
+    return this.http.get<PaginationResponse<AdminOrderResponse>>(`${environment.apiUrl}/Menu/admin-orders/paged`, {
+      params: {
+        pageNumber: request.pageNumber,
+        pageSize: request.pageSize,
+        search: request.search ?? '',
+        sortBy: request.sortBy ?? '',
+        sortDirection: request.sortDirection ?? 'desc',
+      },
+    });
   }
 
   updateOrderStatus(orderId: string, request: UpdateOrderStatusRequest) {

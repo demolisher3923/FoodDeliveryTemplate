@@ -22,11 +22,11 @@ namespace FoodOrderAPI.Middleware
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled exception occurred while processing request {Path}", context.Request.Path);
-                await HandleExceptionAsync(context, ex);
+                await HandleException(context, ex);
             }
         }
-
-        private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        
+        private static async Task HandleException(HttpContext context, Exception exception)
         {
             var statusCode = StatusCodes.Status500InternalServerError;
             var message = "An unexpected error occurred.";

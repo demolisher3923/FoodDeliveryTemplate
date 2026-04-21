@@ -1,4 +1,5 @@
 using DataAccessLayer.Dto.Menu;
+using DataAccessLayer.Dto.Common;
 
 namespace BussinessLayer.Interface
 {
@@ -11,6 +12,7 @@ namespace BussinessLayer.Interface
         Task<OrderResponse> PlaceOrder(Guid menuItemId, Guid userId, PlaceOrderRequest request);
         Task<IReadOnlyList<OrderResponse>> GetMyOrders(Guid userId);
         Task<IReadOnlyList<AdminOrderResponse>> GetAllOrders();
+        Task<PaginationResponse<AdminOrderResponse>> GetPagedOrders(PaginationRequest request);
         Task<AdminOrderResponse> UpdateOrderStatus(Guid orderId, string status, string updatedBy);
     }
 }

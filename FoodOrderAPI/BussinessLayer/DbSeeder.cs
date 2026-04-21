@@ -42,7 +42,7 @@ namespace BussinessLayer
                         CreatedBy = "Seed"
                     });
             }
-
+            
             if (!await context.MenuItems.AnyAsync())
             {
                 context.MenuItems.AddRange(
@@ -59,7 +59,7 @@ namespace BussinessLayer
                     new MenuItem
                     {
                         Name = "Veg Hakka Noodles",
-                        Description = "Wok tossed noodles with crunchy vegetables and soy glaze.",
+                        Description = "Wok tossed noodles with crunchy vegetables and soy sauce.",
                         Category = "Chinese",
                         Price = 179,
                         StockQuantity = 35,

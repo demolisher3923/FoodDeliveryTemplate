@@ -1,4 +1,5 @@
 using BussinessLayer.Interface;
+using DataAccessLayer.Dto.Common;
 using DataAccessLayer.Dto.Menu;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,7 @@ namespace FoodOrderAPI.Controllers
                     return BadRequest(imageValidationError);
                 }
 
-                request.ImageUrl = await SaveProductImageAsync(request.ImageFile);
+                request.ImageUrl = await SaveProductImage(request.ImageFile);
             }
 
             var createdBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
@@ -62,7 +63,7 @@ namespace FoodOrderAPI.Controllers
                         return BadRequest(imageValidationError);
                     }
 
-                    request.ImageUrl = await SaveProductImageAsync(request.ImageFile);
+                    request.ImageUrl = await SaveProductImage(request.ImageFile);
                 }
 
                 var updatedBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
@@ -133,6 +134,14 @@ namespace FoodOrderAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [HttpGet("admin-orders/paged")]
+        public async Task<ActionResult<PaginationResponse<AdminOrderResponse>>> GetPagedAdminOrders([FromQuery] PaginationRequest request)
+        {
+            var orders = await _menuService.GetPagedOrders(request);
+            return Ok(orders);
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPut("admin-orders/{orderId:guid}/status")]
         public async Task<ActionResult<AdminOrderResponse>> UpdateOrderStatus(Guid orderId, [FromBody] UpdateOrderStatusRequest request)
         {
@@ -167,7 +176,7 @@ namespace FoodOrderAPI.Controllers
             return null;
         }
 
-        private async Task<string> SaveProductImageAsync(IFormFile file)
+        private async Task<string> SaveProductImage(IFormFile file)
         {
             var webRootPath = _environment.WebRootPath;
             if (string.IsNullOrWhiteSpace(webRootPath))
@@ -175,7 +184,7 @@ namespace FoodOrderAPI.Controllers
                 webRootPath = Path.Combine(_environment.ContentRootPath, "wwwroot");
             }
 
-            var uploadsDirectory = Path.Combine(webRootPath, "uploads", "products");
+            var uploadsDirectory = Path.Combine(webRootPath, "uploads", "menu");
             Directory.CreateDirectory(uploadsDirectory);
 
             var extension = Path.GetExtension(file.FileName);
@@ -185,7 +194,7 @@ namespace FoodOrderAPI.Controllers
             await using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream);
 
-            return $"/uploads/products/{uniqueFileName}";
+            return $"/uploads/menu/{uniqueFileName}";
         }
     }
 }

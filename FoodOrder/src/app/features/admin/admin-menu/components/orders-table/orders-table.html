@@ -1,6 +1,15 @@
 <mat-card class="users-card" id="orders-section">
   <div class="users-header">
     <h3>Orders</h3>
+    <form [formGroup]="orderSearchForm" class="search-row" (ngSubmit)="searchApplied.emit()">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search order</mat-label>
+        <input matInput formControlName="search" placeholder="user, email, item or status" />
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">Search</button>
+      <button mat-button type="button" (click)="searchCleared.emit()">Clear</button>
+    </form>
+
     <div class="orders-actions">
       <label class="table-size">
         <span>Page Size</span>
@@ -22,14 +31,14 @@
         <thead>
           <tr>
             <th>Sr No</th>
-            <th>User</th>
-            <th>Email</th>
-            <th>Item</th>
+            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('userName')">User</button></th>
+            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('userEmail')">Email</button></th>
+            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('menuItemName')">Item</button></th>
             <th>Qty</th>
-            <th>Total</th>
-            <th>Status</th>
+            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('totalPrice')">Total</button></th>
+            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('status')">Status</button></th>
             <th>Update Status</th>
-            <th>Created</th>
+            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('createdAt')">Created</button></th>
           </tr>
         </thead>
         <tbody>
