@@ -41,6 +41,10 @@ export class Header {
     return this.cartStateService.cartCount();
   }
 
+  openCart(): void {
+    this.router.navigate(['/menu'], { queryParams: { section: 'cart' } });
+  }
+
   logout() {
     this.authService.logout();
   }

@@ -10,14 +10,13 @@
   } @else {
     @if (isAdmin()) {
       <button mat-button (click)="goToDashboard()">Dashboard</button>
-    <a mat-button routerLink="/menu">Menu</a>
 
     }
     @if (isUser()) {
       <a mat-button routerLink="/menu">Browse Menu</a>
     }
     @if (isUser()) {
-      <span class="cart-chip">Cart: {{ cartCount() }}</span>
+      <button class="cart-chip" type="button" (click)="openCart()">Cart: {{ cartCount() }}</button>
     }
     @if (isUser()) {
       <button class="profile-chip" type="button" routerLink="/profile">

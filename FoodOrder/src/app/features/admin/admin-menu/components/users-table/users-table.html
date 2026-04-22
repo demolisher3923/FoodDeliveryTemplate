@@ -1,16 +1,16 @@
 <mat-card class="users-card" id="users-section">
   <div class="users-header">
     <h3>Users</h3>
-    <form [formGroup]="searchForm" class="search-row" (ngSubmit)="searchApplied.emit()">
+    <form [formGroup]="searchForm" class="search-row" (ngSubmit)="applySearch()">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Search user</mat-label>
         <input matInput formControlName="search" placeholder="name, email or mobile" />
       </mat-form-field>
       <button mat-raised-button color="primary" type="submit">Search</button>
-      <button mat-button type="button" (click)="searchCleared.emit()">Clear</button>
+      <button mat-button type="button" (click)="clearSearch()">Clear</button>
       <label class="table-size">
         <span>Page Size</span>
-        <select [value]="pageSize" (change)="pageSizeChanged.emit($any($event.target).value)">
+        <select [value]="pageSize" (change)="onPageSizeChange($any($event.target).value)">
           @for (size of pageSizeOptions; track size) {
             <option [value]="size">{{ size }}</option>
           }
@@ -27,12 +27,12 @@
         <thead>
           <tr>
             <th>Sr No</th>
-            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('fullName')">Full Name</button></th>
-            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('email')">Email</button></th>
+            <th><button type="button" class="sort-btn" (click)="changeSort('fullName')">Full Name</button></th>
+            <th><button type="button" class="sort-btn" (click)="changeSort('email')">Email</button></th>
             <th>Mobile</th>
-            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('role')">Role</button></th>
+            <th><button type="button" class="sort-btn" (click)="changeSort('role')">Role</button></th>
             <th>Status</th>
-            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('createdAt')">Created</button></th>
+            <th><button type="button" class="sort-btn" (click)="changeSort('createdAt')">Created</button></th>
           </tr>
         </thead>
         <tbody>
@@ -60,7 +60,7 @@
       <span>Showing page {{ pageNumber }} of {{ totalPages || 1 }} ({{ totalCount }} users)</span>
       <div class="pager-actions">
         @for (page of pageNumbers; track page) {
-          <button mat-stroked-button [class.active-page]="page === pageNumber" (click)="pageChanged.emit(page)">{{ page }}</button>
+          <button mat-stroked-button [class.active-page]="page === pageNumber" (click)="goToPage(page)">{{ page }}</button>
         }
       </div>
     </div>

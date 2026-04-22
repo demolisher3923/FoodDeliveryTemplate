@@ -1,7 +1,9 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { Chart } from 'chart.js/auto';
+import { MenuService } from '../../../../../core/services/menu-service';
+import { UserService } from '../../../../../core/services/user-service';
 import { AdminOrderResponse } from '../../../../../models/menu.model';
-import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-admin-dashboard-panel',
@@ -9,11 +11,15 @@ import Chart from 'chart.js/auto';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class AdminDashboardPanel implements AfterViewInit, OnChanges, OnDestroy {
-  @Input() todaysOrdersCount = 0;
-  @Input() todaysRevenue = 0;
-  @Input() activeUsersCount = 0;
-  @Input() orders: AdminOrderResponse[] = [];
+export class AdminDashboardPanel implements AfterViewInit, OnInit, OnDestroy {
+  private readonly menuService = inject(MenuService);
+  private readonly userService = inject(UserService);
+  private viewReady = false;
+
+  todaysOrdersCount = 0;
+  todaysRevenue = 0;
+  activeUsersCount = 0;
+  orders: AdminOrderResponse[] = [];
 
   @ViewChild('kpiChart') kpiChartRef?: ElementRef<HTMLCanvasElement>;
   @ViewChild('ordersChart') ordersChartRef?: ElementRef<HTMLCanvasElement>;
@@ -22,18 +28,13 @@ export class AdminDashboardPanel implements AfterViewInit, OnChanges, OnDestroy 
   private ordersChart?: Chart;
   private readonly orderStatusOptions = ['Placed', 'Confirmed', 'Preparing', 'OutForDelivery', 'Delivered', 'Cancelled'];
 
-  ngAfterViewInit(): void {
-    this.renderCharts();
+  ngOnInit(): void {
+    this.loadStats();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (!this.kpiChartRef || !this.ordersChartRef) {
-      return;
-    }
-
-    if (changes['todaysOrdersCount'] || changes['todaysRevenue'] || changes['activeUsersCount'] || changes['orders']) {
-      this.renderCharts();
-    }
+  ngAfterViewInit(): void {
+    this.viewReady = true;
+    this.renderCharts();
   }
 
   ngOnDestroy(): void {
@@ -41,8 +42,35 @@ export class AdminDashboardPanel implements AfterViewInit, OnChanges, OnDestroy 
     this.ordersChart?.destroy();
   }
 
+  private loadStats(): void {
+    this.menuService.getAdminOrders().subscribe({
+      next: (orders) => {
+        this.orders = orders.map((order) => ({
+          ...order,
+          status: this.normalizeStatus(order.status),
+        }));
+        this.updateTodayStats();
+        this.renderCharts();
+      },
+    });
+
+    this.userService
+      .getUsers({
+        pageNumber: 1,
+        pageSize: 8,
+        sortBy: 'createdAt',
+        sortDirection: 'desc',
+      })
+      .subscribe({
+        next: (response) => {
+          this.activeUsersCount = response.items.filter((x) => x.isActive).length;
+          this.renderCharts();
+        },
+      });
+  }
+
   private renderCharts(): void {
-    if (!this.kpiChartRef || !this.ordersChartRef) {
+    if (!this.viewReady || !this.kpiChartRef || !this.ordersChartRef) {
       return;
     }
 
@@ -94,6 +122,14 @@ export class AdminDashboardPanel implements AfterViewInit, OnChanges, OnDestroy 
     });
   }
 
+  private updateTodayStats(): void {
+    const today = new Date();
+    this.todaysOrdersCount = this.orders.filter((x) => this.isToday(new Date(x.createdAt), today)).length;
+    this.todaysRevenue = this.orders
+      .filter((x) => this.isToday(new Date(x.createdAt), today) && x.status !== 'Cancelled')
+      .reduce((sum, x) => sum + x.totalPrice, 0);
+  }
+
   private normalizeStatus(status: string): string {
     const trimmed = (status ?? '').trim();
     const normalizedKey = trimmed.replace(/[^a-z0-9]/gi, '').toLowerCase();
@@ -103,5 +139,11 @@ export class AdminDashboardPanel implements AfterViewInit, OnChanges, OnDestroy 
     );
 
     return match ?? trimmed;
+  }
+
+  private isToday(value: Date, today: Date): boolean {
+    return value.getFullYear() === today.getFullYear()
+      && value.getMonth() === today.getMonth()
+      && value.getDate() === today.getDate();
   }
 }

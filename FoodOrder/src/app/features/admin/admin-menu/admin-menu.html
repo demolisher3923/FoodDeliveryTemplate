@@ -10,12 +10,7 @@
 
     <div class="dashboard-content">
       @if (activeSection === 'dashboard') {
-        <app-admin-dashboard-panel
-          [todaysOrdersCount]="todaysOrdersCount"
-          [todaysRevenue]="todaysRevenue"
-          [activeUsersCount]="activeUsersCount"
-          [orders]="orders">
-        </app-admin-dashboard-panel>
+        <app-admin-dashboard-panel></app-admin-dashboard-panel>
       }
 
       @if (activeSection === 'menu') {
@@ -23,49 +18,11 @@
       }
 
       @if (activeSection === 'users') {
-        <app-admin-users-table
-          [searchForm]="searchForm"
-          [loadingUsers]="loadingUsers"
-          [users]="users"
-          [pageNumber]="pageNumber"
-          [pageSize]="pageSize"
-          [pageSizeOptions]="pageSizeOptions"
-          [totalPages]="totalPages"
-          [totalCount]="totalCount"
-          [pageNumbers]="pageNumbers"
-          (searchApplied)="applySearch()"
-          (searchCleared)="clearSearch()"
-          (sortChanged)="changeSort($event)"
-          (pageChanged)="goToPage($event)"
-          (pageSizeChanged)="onUsersPageSizeChange($event)">
-        </app-admin-users-table>
+        <app-admin-users-table></app-admin-users-table>
       }
 
       @if (activeSection === 'orders') {
-        <app-admin-orders-table
-          [loadingOrders]="loadingOrders"
-          [orderSearchForm]="orderSearchForm"
-          [pagedOrders]="pagedOrders"
-          [ordersCount]="ordersTotalCount"
-          [ordersPageNumber]="ordersPageNumber"
-          [ordersPageSize]="ordersPageSize"
-          [ordersTotalPages]="ordersTotalPages"
-          [pageSizeOptions]="pageSizeOptions"
-          [orderPageNumbers]="orderPageNumbers"
-          [ordersSortBy]="ordersSortBy"
-          [ordersSortDirection]="ordersSortDirection"
-          [orderStatusOptions]="orderStatusOptions"
-          [orderStatusDrafts]="orderStatusDrafts"
-          [updatingOrderId]="updatingOrderId"
-          (refreshOrders)="loadOrdersPage()"
-          (searchApplied)="applyOrderSearch()"
-          (searchCleared)="clearOrderSearch()"
-          (sortChanged)="changeOrderSort($event)"
-          (orderPageSizeChanged)="onOrdersPageSizeChange($event)"
-          (ordersPageChanged)="goToOrdersPage($event)"
-          (statusDraftChanged)="onStatusDraftChange($event.orderId, $event.status)"
-          (statusSaved)="updateOrderStatus($event)">
-        </app-admin-orders-table>
+        <app-admin-orders-table></app-admin-orders-table>
       }
     </div>
   </div>

@@ -1,37 +1,25 @@
 import { Component, OnDestroy, computed, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSelectModule } from '@angular/material/select';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../core/services/auth-service';
 import { MenuService } from '../../core/services/menu-service';
-import { CartItem, MenuItem, MenuItemRequest, OrderResponse } from '../../models/menu.model';
+import { CartItem, MenuItem, OrderResponse } from '../../models/menu.model';
 import { ToastService } from '../../core/services/toast-service';
 import Swal from 'sweetalert2';
 import { firstValueFrom } from 'rxjs';
 import { MenuItemCard } from './components/menu-item-card/menu-item-card';
 import { CartStateService } from '../../core/services/cart-state-service';
-import { environment } from '../../../environments/environment.development';
 import { UserCart } from './components/cart/cart';
 import { UserOrders } from './components/user-orders/user-orders';
+import { AdminMenuManagement } from '../admin/admin-menu/components/menu-management/menu-management';
 
 @Component({
   selector: 'app-menu',
   imports: [
-    ReactiveFormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSlideToggleModule,
-    MatSelectModule,
     MenuItemCard,
     UserCart,
     UserOrders,
+    AdminMenuManagement,
   ],
   templateUrl: './menu.html',
   styleUrl: './menu.css',
@@ -41,20 +29,14 @@ export class Menu implements OnDestroy {
   private ordersRefreshTimer: ReturnType<typeof setInterval> | null = null;
   private readonly authService = inject(AuthService);
   private readonly menuService = inject(MenuService);
-  private readonly fb = inject(FormBuilder);
   private readonly toastService = inject(ToastService);
   private readonly cartStateService = inject(CartStateService);
+  private readonly route = inject(ActivatedRoute);
 
   readonly isAdmin = computed(() => this.authService.hasRole('Admin'));
   readonly isUser = computed(() => this.authService.hasRole('User'));
-  readonly categories = ['Fast Food', 'Pizza', 'Beverages', 'Dessert', 'Healthy'];
   loading = false;
-  saving = false;
   orderLoadingId: string | null = null;
-  imageError = '';
-  selectedProductImage: File | null = null;
-  productImagePreview: string | null = null;
-  existingImageUrl = '';
 
   message = '';
   errorMessage = '';
@@ -64,17 +46,7 @@ export class Menu implements OnDestroy {
   readonly itemQuantities: Record<string, number> = {};
   cartItems: CartItem[] = [];
 
-  editingItemId: string | null = null;
   activeUserSection: 'menu' | 'cart' | 'orders' = 'menu';
-
-  readonly menuForm = this.fb.group({
-    name: ['', [Validators.required]],
-    description: ['', [Validators.required]],
-    category: ['', [Validators.required]],
-    price: [0, [Validators.required, Validators.min(1)]],
-    stockQuantity: [0, [Validators.required, Validators.min(0)]],
-    isAvailable: [true],
-  });
 
   private readonly onStorageChange = (event: StorageEvent): void => {
     if (!this.isUser() || event.key !== Menu.ORDERS_UPDATED_EVENT_KEY) {
@@ -85,12 +57,12 @@ export class Menu implements OnDestroy {
   };
 
   constructor() {
-    this.loadMenu();
-
     if (this.isUser()) {
+      this.loadMenu();
       this.loadMyCart();
       this.loadMyOrders();
       this.startOrdersAutoRefresh();
+      this.watchActiveSection();
       window.addEventListener('storage', this.onStorageChange);
       return;
     }
@@ -107,7 +79,7 @@ export class Menu implements OnDestroy {
     window.removeEventListener('storage', this.onStorageChange);
   }
 
-  loadMenu() {
+  loadMenu(): void {
     this.loading = true;
     this.menuService.getMenu().subscribe({
       next: (menu) => {
@@ -128,17 +100,17 @@ export class Menu implements OnDestroy {
     });
   }
 
-  decrementQuantity(itemId: string) {
+  decrementQuantity(itemId: string): void {
     const currentQuantity = this.itemQuantities[itemId] ?? 1;
     this.itemQuantities[itemId] = Math.max(1, currentQuantity - 1);
   }
 
-  incrementQuantity(itemId: string) {
+  incrementQuantity(itemId: string): void {
     const currentQuantity = this.itemQuantities[itemId] ?? 1;
     this.itemQuantities[itemId] = currentQuantity + 1;
   }
 
-  loadMyOrders() {
+  loadMyOrders(): void {
     this.menuService.getMyOrders().subscribe({
       next: (orders) => {
         this.myOrders = orders.map((order) => ({
@@ -152,7 +124,7 @@ export class Menu implements OnDestroy {
     });
   }
 
-  loadMyCart() {
+  loadMyCart(): void {
     this.menuService.getMyCart().subscribe({
       next: (cartItems) => {
         this.setCartItems(cartItems);
@@ -163,144 +135,7 @@ export class Menu implements OnDestroy {
     });
   }
 
-  startEdit(item: MenuItem) {
-    this.editingItemId = item.id;
-    this.menuForm.patchValue({
-      name: item.name,
-      description: item.description,
-      category: item.category,
-      price: item.price,
-      stockQuantity: item.stockQuantity,
-      isAvailable: item.isAvailable,
-    });
-    this.existingImageUrl = item.imageUrl ?? '';
-    this.selectedProductImage = null;
-    this.productImagePreview = this.resolveImageUrl(this.existingImageUrl);
-    this.imageError = '';
-  }
-
-  resetForm() {
-    this.editingItemId = null;
-    this.menuForm.reset({
-      name: '',
-      description: '',
-      category: '',
-      price: 0,
-      stockQuantity: 0,
-      isAvailable: true,
-    });
-    this.existingImageUrl = '';
-    this.selectedProductImage = null;
-    this.productImagePreview = null;
-    this.imageError = '';
-  }
-
-  onProductImageChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-
-    if (!file) {
-      this.selectedProductImage = null;
-      this.productImagePreview = this.resolveImageUrl(this.existingImageUrl);
-      return;
-    }
-
-    const validTypes = ['image/png', 'image/jpeg'];
-    if (!validTypes.includes(file.type)) {
-      this.imageError = 'Only JPG and PNG product images are allowed.';
-      this.selectedProductImage = null;
-      this.productImagePreview = null;
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      this.imageError = 'Image must be 5MB or smaller.';
-      this.selectedProductImage = null;
-      this.productImagePreview = null;
-      return;
-    }
-
-    this.imageError = '';
-    this.selectedProductImage = file;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.productImagePreview = typeof reader.result === 'string' ? reader.result : null;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  saveMenuItem() {
-    if (this.menuForm.invalid || this.saving || !this.isAdmin() || !!this.imageError) {
-      this.menuForm.markAllAsTouched();
-      return;
-    }
-
-    this.saving = true;
-    this.message = '';
-    this.errorMessage = '';
-
-    const value = this.menuForm.getRawValue();
-    const request: MenuItemRequest = {
-      name: value.name ?? '',
-      description: value.description ?? '',
-      category: value.category ?? '',
-      price: Number(value.price ?? 0),
-      stockQuantity: Number(value.stockQuantity ?? 0),
-      imageUrl: this.existingImageUrl,
-      isAvailable: !!value.isAvailable,
-      imageFile: this.selectedProductImage,
-    };
-
-    const call = this.editingItemId
-      ? this.menuService.updateMenuItem(this.editingItemId, request)
-      : this.menuService.createMenuItem(request);
-
-    call.subscribe({
-      next: () => {
-        this.saving = false;
-        this.message = this.editingItemId ? 'Menu item updated.' : 'Menu item created.';
-        this.toastService.success(this.message);
-        this.resetForm();
-        this.loadMenu();
-      },
-      error: () => {
-        this.saving = false;
-        this.errorMessage = 'Failed to save menu item.';
-        this.toastService.error(this.errorMessage);
-      },
-    });
-  }
-
-  async deleteMenuItem(item: MenuItem) {
-    if (!this.isAdmin()) {
-      return;
-    }
-
-    const result = await Swal.fire({
-      title: 'Delete product?',
-      text: `${item.name} will be removed from active menu.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Delete',
-    });
-
-    if (!result.isConfirmed) {
-      return;
-    }
-
-    this.menuService.deleteMenuItem(item.id).subscribe({
-      next: () => {
-        this.toastService.success('Product deleted.');
-        this.loadMenu();
-      },
-      error: () => {
-        this.toastService.error('Failed to delete product.');
-      },
-    });
-  }
-
-  placeOrder(item: MenuItem) {
+  placeOrder(item: MenuItem): void {
     if (!this.isUser() || !item.isAvailable) {
       return;
     }
@@ -332,7 +167,7 @@ export class Menu implements OnDestroy {
     });
   }
 
-  removeCartItem(menuItemId: string) {
+  removeCartItem(menuItemId: string): void {
     this.menuService.removeCartItem(menuItemId).subscribe({
       next: (cartItems) => {
         this.setCartItems(cartItems);
@@ -347,7 +182,7 @@ export class Menu implements OnDestroy {
     return this.cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
   }
 
-  async checkout() {
+  async checkout(): Promise<void> {
     if (!this.isUser() || this.cartItems.length === 0) {
       return;
     }
@@ -412,17 +247,13 @@ export class Menu implements OnDestroy {
     this.activeUserSection = section;
   }
 
-  private resolveImageUrl(imageUrl: string | null): string | null {
-    if (!imageUrl || !imageUrl.trim()) {
-      return null;
-    }
-
-    if (imageUrl.startsWith('http') || imageUrl.startsWith('data:image')) {
-      return imageUrl;
-    }
-
-    const apiHost = environment.apiUrl.replace('/api', '');
-    return `${apiHost}${imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`}`;
+  private watchActiveSection(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      const section = params.get('section');
+      if (section === 'menu' || section === 'cart' || section === 'orders') {
+        this.activeUserSection = section;
+      }
+    });
   }
 
   private extractApiErrorMessage(error: unknown): string | null {
@@ -453,32 +284,15 @@ export class Menu implements OnDestroy {
   private toCanonicalStatus(status: string): string {
     const value = (status ?? '').trim();
     const compressed = value.replace(/[^a-z0-9]/gi, '').toLowerCase();
+    const statuses: Record<string, string> = {
+      placed: 'Placed',
+      confirmed: 'Confirmed',
+      preparing: 'Preparing',
+      outfordelivery: 'OutForDelivery',
+      delivered: 'Delivered',
+      cancelled: 'Cancelled',
+    };
 
-    if (compressed === 'placed') {
-      return 'Placed';
-    }
-
-    if (compressed === 'confirmed') {
-      return 'Confirmed';
-    }
-
-    if (compressed === 'preparing') {
-      return 'Preparing';
-    }
-
-    if (compressed === 'outfordelivery') {
-      return 'OutForDelivery';
-    }
-
-    if (compressed === 'delivered') {
-      return 'Delivered';
-    }
-
-    if (compressed === 'cancelled') {
-      return 'Cancelled';
-    }
-
-    return value;
+    return statuses[compressed] ?? value;
   }
-
 }

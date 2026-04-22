@@ -1,25 +1,25 @@
 <mat-card class="users-card" id="orders-section">
   <div class="users-header">
     <h3>Orders</h3>
-    <form [formGroup]="orderSearchForm" class="search-row" (ngSubmit)="searchApplied.emit()">
+    <form [formGroup]="orderSearchForm" class="search-row" (ngSubmit)="applyOrderSearch()">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Search order</mat-label>
         <input matInput formControlName="search" placeholder="user, email, item or status" />
       </mat-form-field>
       <button mat-raised-button color="primary" type="submit">Search</button>
-      <button mat-button type="button" (click)="searchCleared.emit()">Clear</button>
+      <button mat-button type="button" (click)="clearOrderSearch()">Clear</button>
     </form>
 
     <div class="orders-actions">
       <label class="table-size">
         <span>Page Size</span>
-        <select [value]="ordersPageSize" (change)="orderPageSizeChanged.emit($any($event.target).value)">
+        <select [value]="ordersPageSize" (change)="onOrdersPageSizeChange($any($event.target).value)">
           @for (size of pageSizeOptions; track size) {
             <option [value]="size">{{ size }}</option>
           }
         </select>
       </label>
-      <button mat-stroked-button color="primary" (click)="refreshOrders.emit()">Refresh Orders</button>
+      <button mat-stroked-button color="primary" (click)="loadOrdersPage()">Refresh Orders</button>
     </div>
   </div>
 
@@ -31,14 +31,14 @@
         <thead>
           <tr>
             <th>Sr No</th>
-            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('userName')">User</button></th>
-            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('userEmail')">Email</button></th>
-            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('menuItemName')">Item</button></th>
+            <th><button type="button" class="sort-btn" (click)="changeOrderSort('userName')">User</button></th>
+            <th><button type="button" class="sort-btn" (click)="changeOrderSort('userEmail')">Email</button></th>
+            <th><button type="button" class="sort-btn" (click)="changeOrderSort('menuItemName')">Item</button></th>
             <th>Qty</th>
-            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('totalPrice')">Total</button></th>
-            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('status')">Status</button></th>
+            <th><button type="button" class="sort-btn" (click)="changeOrderSort('totalPrice')">Total</button></th>
+            <th><button type="button" class="sort-btn" (click)="changeOrderSort('status')">Status</button></th>
             <th>Update Status</th>
-            <th><button type="button" class="sort-btn" (click)="sortChanged.emit('createdAt')">Created</button></th>
+            <th><button type="button" class="sort-btn" (click)="changeOrderSort('createdAt')">Created</button></th>
           </tr>
         </thead>
         <tbody>
@@ -55,12 +55,12 @@
               </td>
               <td>
                 <div class="status-editor">
-                  <select [value]="orderStatusDrafts[order.orderId]" (change)="statusDraftChanged.emit({ orderId: order.orderId, status: $any($event.target).value })">
+                  <select [value]="orderStatusDrafts[order.orderId]" (change)="onStatusDraftChange(order.orderId, $any($event.target).value)">
                     @for (status of orderStatusOptions; track status) {
                       <option [value]="status">{{ status }}</option>
                     }
                   </select>
-                  <button mat-button color="primary" type="button" [disabled]="updatingOrderId === order.orderId" (click)="statusSaved.emit(order)">
+                  <button mat-button color="primary" type="button" [disabled]="updatingOrderId === order.orderId" (click)="updateOrderStatus(order)">
                     {{ updatingOrderId === order.orderId ? 'Saving...' : 'Save' }}
                   </button>
                 </div>
@@ -81,7 +81,7 @@
       <span>Showing page {{ ordersPageNumber }} of {{ ordersTotalPages || 1 }} ({{ ordersCount }} orders)</span>
       <div class="pager-actions">
         @for (page of orderPageNumbers; track page) {
-          <button mat-stroked-button [class.active-page]="page === ordersPageNumber" (click)="ordersPageChanged.emit(page)">{{ page }}</button>
+          <button mat-stroked-button [class.active-page]="page === ordersPageNumber" (click)="goToOrdersPage(page)">{{ page }}</button>
         }
       </div>
     </div>
