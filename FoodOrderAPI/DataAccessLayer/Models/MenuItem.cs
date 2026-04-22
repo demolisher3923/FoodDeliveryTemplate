@@ -13,5 +13,6 @@ namespace DataAccessLayer.Models
         public string? ImageUrl { get; set; }
 
         public ICollection<FoodOrder> Orders { get; set; } = [];
+        public ICollection<CartItemEntity> CartItems { get; set; } = [];
     }
 }

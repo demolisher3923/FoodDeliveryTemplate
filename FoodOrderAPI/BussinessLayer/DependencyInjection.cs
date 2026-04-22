@@ -9,6 +9,7 @@ namespace BussinessLayer
         public static void AddBussinessServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ICartService, CartService>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPasswordHashService, PasswordHashService>();

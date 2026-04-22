@@ -15,6 +15,7 @@ namespace DataAccessLayer.Models
         public string Role { get; set; } = "User";
         public string PreferredContactMethod { get; set; }
         public ICollection<FoodOrder> Orders { get; set; } = [];
+        public ICollection<CartItemEntity> CartItems { get; set; } = [];
         
     }
 }

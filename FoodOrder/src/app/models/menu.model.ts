@@ -43,6 +43,10 @@ export interface CartItem {
   totalPrice: number;
 }
 
+export interface UpsertCartItemRequest {
+  quantity: number;
+}
+
 export interface AdminOrderResponse {
   orderId: string;
   userId: string;

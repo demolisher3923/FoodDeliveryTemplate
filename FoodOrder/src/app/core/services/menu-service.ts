@@ -1,7 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
-import { AdminOrderResponse, MenuItem, MenuItemRequest, OrderResponse, PlaceOrderRequest, UpdateOrderStatusRequest } from '../../models/menu.model';
+import {
+  AdminOrderResponse,
+  CartItem,
+  MenuItem,
+  MenuItemRequest,
+  OrderResponse,
+  PlaceOrderRequest,
+  UpdateOrderStatusRequest,
+  UpsertCartItemRequest,
+} from '../../models/menu.model';
 import { PaginationRequest, PaginationResponse } from '../../models/pagination.model';
 
 @Injectable({ providedIn: 'root' })
@@ -37,8 +46,9 @@ export class MenuService {
   }
 
   getPagedAdminOrders(request: PaginationRequest) {
-    return this.http.get<PaginationResponse<AdminOrderResponse>>(`${environment.apiUrl}/Menu/admin-orders/paged`, {
+    return this.http.get<PaginationResponse<AdminOrderResponse>>(`${environment.apiUrl}/Menu/admin-orders`, {
       params: {
+        paged: true,
         pageNumber: request.pageNumber,
         pageSize: request.pageSize,
         search: request.search ?? '',
@@ -46,6 +56,18 @@ export class MenuService {
         sortDirection: request.sortDirection ?? 'desc',
       },
     });
+  }
+
+  getMyCart() {
+    return this.http.get<CartItem[]>(`${environment.apiUrl}/Cart`);
+  }
+
+  upsertCartItem(menuItemId: string, request: UpsertCartItemRequest) {
+    return this.http.put<CartItem[]>(`${environment.apiUrl}/Cart/items/${menuItemId}`, request);
+  }
+
+  removeCartItem(menuItemId: string) {
+    return this.http.delete<CartItem[]>(`${environment.apiUrl}/Cart/items/${menuItemId}`);
   }
 
   updateOrderStatus(orderId: string, request: UpdateOrderStatusRequest) {

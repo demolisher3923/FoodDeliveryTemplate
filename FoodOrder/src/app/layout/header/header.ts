@@ -42,7 +42,6 @@ export class Header {
   }
 
   logout() {
-    this.cartStateService.reset();
     this.authService.logout();
   }
 

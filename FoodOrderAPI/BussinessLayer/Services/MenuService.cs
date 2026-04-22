@@ -9,11 +9,13 @@ namespace BussinessLayer.Services
     public class MenuService : IMenuService
     {
         private readonly IMenuRepository _menuRepository;
+        private readonly ICartRepository _cartRepository;
         private static readonly string[] AllowedOrderStatuses = new[] { "Placed", "Confirmed", "Preparing", "OutForDelivery", "Delivered", "Cancelled" };
 
-        public MenuService(IMenuRepository menuRepository)
+        public MenuService(IMenuRepository menuRepository, ICartRepository cartRepository)
         {
             _menuRepository = menuRepository;
+            _cartRepository = cartRepository;
         }
 
         public async Task<IReadOnlyList<MenuItemResponse>> GetMenu()
@@ -152,6 +154,15 @@ namespace BussinessLayer.Services
             };
 
             await _menuRepository.AddOrder(order);
+
+            var cartItem = await _cartRepository.GetActiveCartItem(userId, menuItemId);
+            if (cartItem is not null)
+            {
+                cartItem.IsActive = false;
+                cartItem.UpdatedAt = DateTime.UtcNow;
+                cartItem.UpdatedBy = userId.ToString();
+            }
+
             await _menuRepository.SaveChanges();
 
             return new OrderResponse
@@ -272,5 +283,6 @@ namespace BussinessLayer.Services
                 CreatedAt = order.CreatedAt
             };
         }
+
     }
 }

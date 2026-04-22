@@ -10,10 +10,18 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AdminDashboardPanel } from './components/dashboard/dashboard';
 import { AdminUsersTable } from './components/users-table/users-table';
 import { AdminOrdersTable } from './components/orders-table/orders-table';
+import { AdminMenuManagement } from './components/menu-management/menu-management';
 
 @Component({
   selector: 'app-admin-menu',
-  imports: [CommonModule, ReactiveFormsModule, AdminDashboardPanel, AdminUsersTable, AdminOrdersTable],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    AdminMenuManagement,
+    AdminDashboardPanel,
+    AdminUsersTable,
+    AdminOrdersTable,
+  ],
   templateUrl: './admin-menu.html',
   styleUrl: './admin-menu.css',
 })
@@ -50,7 +58,7 @@ export class AdminMenu {
   ordersSortDirection: 'asc' | 'desc' = 'desc';
   sortBy = 'createdAt';
   sortDirection: 'asc' | 'desc' = 'desc';
-  activeSection: 'dashboard' | 'users' | 'orders' = 'dashboard';
+  activeSection: 'dashboard' | 'menu' | 'users' | 'orders' = 'dashboard';
 
   readonly searchForm = this.fb.group({
     search: [''],
@@ -194,32 +202,22 @@ export class AdminMenu {
   }
 
   get pageNumbers(): number[] {
-    if (this.totalPages <= 1) {
-      return [1];
-    }
-
-    const start = Math.max(1, this.pageNumber - 2);
-    const end = Math.min(this.totalPages, start + 4);
-    const numbers: number[] = [];
-    for (let page = start; page <= end; page++) {
-      numbers.push(page);
-    }
-
-    return numbers;
+    return this.buildPageNumbers(this.pageNumber, this.totalPages);
   }
 
   goToPage(page: number) {
-    if (page < 1 || page > this.totalPages || page === this.pageNumber) {
+    const nextPage = this.resolveNextPage(page, this.pageNumber, this.totalPages);
+    if (nextPage === null) {
       return;
     }
 
-    this.pageNumber = page;
+    this.pageNumber = nextPage;
     this.loadUsers();
   }
 
   onUsersPageSizeChange(size: string) {
-    const parsed = Number(size);
-    if (!Number.isInteger(parsed) || parsed <= 0) {
+    const parsed = this.parsePageSize(size);
+    if (parsed === null) {
       return;
     }
 
@@ -229,8 +227,8 @@ export class AdminMenu {
   }
 
   onOrdersPageSizeChange(size: string) {
-    const parsed = Number(size);
-    if (!Number.isInteger(parsed) || parsed <= 0) {
+    const parsed = this.parsePageSize(size);
+    if (parsed === null) {
       return;
     }
 
@@ -240,27 +238,17 @@ export class AdminMenu {
   }
 
   goToOrdersPage(page: number) {
-    if (page < 1 || page > this.ordersTotalPages || page === this.ordersPageNumber) {
+    const nextPage = this.resolveNextPage(page, this.ordersPageNumber, this.ordersTotalPages);
+    if (nextPage === null) {
       return;
     }
 
-    this.ordersPageNumber = page;
+    this.ordersPageNumber = nextPage;
     this.loadOrdersPage();
   }
 
   get orderPageNumbers(): number[] {
-    if (this.ordersTotalPages <= 1) {
-      return [1];
-    }
-
-    const start = Math.max(1, this.ordersPageNumber - 2);
-    const end = Math.min(this.ordersTotalPages, start + 4);
-    const numbers: number[] = [];
-    for (let page = start; page <= end; page++) {
-      numbers.push(page);
-    }
-
-    return numbers;
+    return this.buildPageNumbers(this.ordersPageNumber, this.ordersTotalPages);
   }
 
   applyOrderSearch() {
@@ -331,7 +319,7 @@ export class AdminMenu {
     this.saveDraftsToStorage();
   }
 
-  setActiveSection(section: 'dashboard' | 'users' | 'orders'): void {
+  setActiveSection(section: 'dashboard' | 'menu' | 'users' | 'orders'): void {
     this.activeSection = section;
   }
 
@@ -413,6 +401,38 @@ export class AdminMenu {
     this.todaysRevenue = this.orders
       .filter((x) => this.isToday(new Date(x.createdAt), today) && x.status !== 'Cancelled')
       .reduce((sum, x) => sum + x.totalPrice, 0);
+  }
+
+  private parsePageSize(size: string): number | null {
+    const parsed = Number(size);
+    if (!Number.isInteger(parsed) || parsed <= 0) {
+      return null;
+    }
+
+    return parsed;
+  }
+
+  private resolveNextPage(requestedPage: number, currentPage: number, totalPages: number): number | null {
+    if (requestedPage < 1 || requestedPage > totalPages || requestedPage === currentPage) {
+      return null;
+    }
+
+    return requestedPage;
+  }
+
+  private buildPageNumbers(currentPage: number, totalPages: number): number[] {
+    if (totalPages <= 1) {
+      return [1];
+    }
+
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, start + 4);
+    const numbers: number[] = [];
+    for (let page = start; page <= end; page++) {
+      numbers.push(page);
+    }
+
+    return numbers;
   }
 
   private isToday(value: Date, today: Date): boolean {

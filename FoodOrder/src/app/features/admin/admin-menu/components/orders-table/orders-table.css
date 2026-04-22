@@ -6,7 +6,8 @@
 .users-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 10px;
 }
@@ -18,17 +19,22 @@
 .search-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+  flex: 1 1 560px;
 }
 
 .search-field {
   min-width: 260px;
+  flex: 1 1 320px;
 }
 
 .orders-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+  margin-left: auto;
 }
 
 .table-size {
@@ -156,6 +162,10 @@
   .pagination-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .orders-actions {
+    margin-left: 0;
   }
 
   .search-field {

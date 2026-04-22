@@ -8,6 +8,7 @@ namespace DataAccessLayer
     {
         public static void AddDataAccessServices(this IServiceCollection services)
         {
+            services.AddScoped<ICartRepository, CartRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
         }

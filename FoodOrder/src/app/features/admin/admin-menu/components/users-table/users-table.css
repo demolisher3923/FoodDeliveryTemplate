@@ -6,7 +6,8 @@
 .users-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 10px;
 }
@@ -18,11 +19,14 @@
 .search-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+  flex: 1 1 560px;
 }
 
 .search-field {
   min-width: 260px;
+  flex: 1 1 320px;
 }
 
 .table-size {

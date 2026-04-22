@@ -86,13 +86,16 @@ export class Menu implements OnDestroy {
 
   constructor() {
     this.loadMenu();
-    this.cartStateService.setCartCount(this.cartItems.length);
 
     if (this.isUser()) {
+      this.loadMyCart();
       this.loadMyOrders();
       this.startOrdersAutoRefresh();
       window.addEventListener('storage', this.onStorageChange);
+      return;
     }
+
+    this.cartStateService.setCartCount(0);
   }
 
   ngOnDestroy(): void {
@@ -145,6 +148,17 @@ export class Menu implements OnDestroy {
       },
       error: () => {
         this.toastService.error('Unable to load your orders.');
+      },
+    });
+  }
+
+  loadMyCart() {
+    this.menuService.getMyCart().subscribe({
+      next: (cartItems) => {
+        this.setCartItems(cartItems);
+      },
+      error: () => {
+        this.toastService.error('Unable to load your cart.');
       },
     });
   }
@@ -299,28 +313,34 @@ export class Menu implements OnDestroy {
     }
 
     const existing = this.cartItems.find((x) => x.menuItemId === item.id);
-    if (existing) {
-      existing.quantity += quantity;
-      existing.totalPrice = existing.unitPrice * existing.quantity;
-    } else {
-      this.cartItems.push({
-        menuItemId: item.id,
-        menuItemName: item.name,
-        unitPrice: item.price,
-        quantity,
-        totalPrice: item.price * quantity,
-      });
-    }
+    const nextQuantity = (existing?.quantity ?? 0) + quantity;
 
-    this.itemQuantities[item.id] = 1;
-    this.message = `${item.name} added to cart.`;
-    this.cartStateService.setCartCount(this.cartItems.length);
-    this.toastService.success(this.message);
+    this.orderLoadingId = item.id;
+    this.menuService.upsertCartItem(item.id, { quantity: nextQuantity }).subscribe({
+      next: (cartItems) => {
+        this.orderLoadingId = null;
+        this.setCartItems(cartItems);
+        this.itemQuantities[item.id] = 1;
+        this.message = `${item.name} added to cart.`;
+        this.toastService.success(this.message);
+      },
+      error: (error) => {
+        this.orderLoadingId = null;
+        const message = this.extractApiErrorMessage(error) ?? 'Unable to update cart.';
+        this.toastService.error(message);
+      },
+    });
   }
 
   removeCartItem(menuItemId: string) {
-    this.cartItems = this.cartItems.filter((x) => x.menuItemId !== menuItemId);
-    this.cartStateService.setCartCount(this.cartItems.length);
+    this.menuService.removeCartItem(menuItemId).subscribe({
+      next: (cartItems) => {
+        this.setCartItems(cartItems);
+      },
+      error: () => {
+        this.toastService.error('Unable to remove item from cart.');
+      },
+    });
   }
 
   get cartTotal(): number {
@@ -371,6 +391,7 @@ export class Menu implements OnDestroy {
       if (successCount > 0) {
         this.loadMyOrders();
         this.loadMenu();
+        this.loadMyCart();
       }
 
       if (successCount > 0 && failedItems.length === 0) {
@@ -416,6 +437,11 @@ export class Menu implements OnDestroy {
     }
 
     return null;
+  }
+
+  private setCartItems(cartItems: CartItem[]): void {
+    this.cartItems = cartItems;
+    this.cartStateService.setCartCount(cartItems.length);
   }
 
   private startOrdersAutoRefresh(): void {

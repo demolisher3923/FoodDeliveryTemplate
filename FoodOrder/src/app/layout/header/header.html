@@ -10,6 +10,8 @@
   } @else {
     @if (isAdmin()) {
       <button mat-button (click)="goToDashboard()">Dashboard</button>
+    <a mat-button routerLink="/menu">Menu</a>
+
     }
     @if (isUser()) {
       <a mat-button routerLink="/menu">Browse Menu</a>

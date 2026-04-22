@@ -3,6 +3,7 @@
     <aside class="dashboard-sidenav">
       <h3>Admin Panel</h3>
       <button type="button" [class.active]="activeSection === 'dashboard'" (click)="setActiveSection('dashboard')">Dashboard</button>
+      <button type="button" [class.active]="activeSection === 'menu'" (click)="setActiveSection('menu')">Menu</button>
       <button type="button" [class.active]="activeSection === 'users'" (click)="setActiveSection('users')">Users Table</button>
       <button type="button" [class.active]="activeSection === 'orders'" (click)="setActiveSection('orders')">Orders Table</button>
     </aside>
@@ -15,6 +16,10 @@
           [activeUsersCount]="activeUsersCount"
           [orders]="orders">
         </app-admin-dashboard-panel>
+      }
+
+      @if (activeSection === 'menu') {
+        <app-admin-menu-management></app-admin-menu-management>
       }
 
       @if (activeSection === 'users') {

@@ -127,17 +127,15 @@ namespace FoodOrderAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("admin-orders")]
-        public async Task<ActionResult<IReadOnlyList<AdminOrderResponse>>> GetAdminOrders()
+        public async Task<ActionResult> GetAdminOrders([FromQuery] PaginationRequest request, [FromQuery] bool paged = false)
         {
-            var orders = await _menuService.GetAllOrders();
-            return Ok(orders);
-        }
+            if (paged)
+            {
+                var pagedOrders = await _menuService.GetPagedOrders(request);
+                return Ok(pagedOrders);
+            }
 
-        [Authorize(Roles = "Admin")]
-        [HttpGet("admin-orders/paged")]
-        public async Task<ActionResult<PaginationResponse<AdminOrderResponse>>> GetPagedAdminOrders([FromQuery] PaginationRequest request)
-        {
-            var orders = await _menuService.GetPagedOrders(request);
+            var orders = await _menuService.GetAllOrders();
             return Ok(orders);
         }
 

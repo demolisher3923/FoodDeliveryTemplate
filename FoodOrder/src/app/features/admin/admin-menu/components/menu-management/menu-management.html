@@ -1,0 +1,63 @@
+<mat-card class="menu-form-card">
+  <div class="menu-form-header">
+    <h3>{{ editingMenuItemId ? 'Update Menu Item' : 'Add Menu Item' }}</h3>
+    @if (editingMenuItemId) {
+      <button mat-button type="button" (click)="resetMenuForm()">Cancel Edit</button>
+    }
+  </div>
+
+  <form [formGroup]="menuItemForm" class="menu-form" (ngSubmit)="saveMenuItem()">
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        @for (category of menuCategories; track category) {
+          <mat-option [value]="category">{{ category }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Price</mat-label>
+      <input matInput type="number" min="1" formControlName="price" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Stock Quantity</mat-label>
+      <input matInput type="number" min="0" formControlName="stockQuantity" />
+    </mat-form-field>
+
+    <div class="toggle-row">
+      <mat-slide-toggle formControlName="isAvailable">Available</mat-slide-toggle>
+    </div>
+
+    <div class="menu-form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="savingMenuItem">
+        {{ savingMenuItem ? 'Saving...' : (editingMenuItemId ? 'Update Menu Item' : 'Create Menu Item') }}
+      </button>
+    </div>
+  </form>
+</mat-card>
+
+@if (loadingMenu) {
+  <p class="section-loading">Loading menu items...</p>
+} @else {
+  <div class="admin-menu-grid">
+    @for (item of menuItems; track item.id) {
+      <app-menu-item-card [item]="item" [isAdmin]="true" (edit)="startEditMenuItem($event)" (remove)="deleteMenuItem($event)"></app-menu-item-card>
+    }
+  </div>
+
+  @if (menuItems.length === 0) {
+    <p class="section-empty">No menu items available.</p>
+  }
+}
