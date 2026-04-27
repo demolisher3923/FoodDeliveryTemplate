@@ -36,6 +36,32 @@
       <input matInput type="number" min="0" formControlName="stockQuantity" />
     </mat-form-field>
 
+    <div class="image-upload-field">
+      <label for="menu-image-input" class="image-upload-label">Menu Image (.jpg, .jpeg, .png, max 5 MB)</label>
+      <input
+        #menuImageInput
+        id="menu-image-input"
+        class="image-upload-input"
+        type="file"
+        accept="image/png,image/jpeg"
+        (change)="onImageFileSelected($event)"
+      />
+
+      @if (selectedImageName) {
+        <p class="image-upload-meta">Selected: {{ selectedImageName }}</p>
+      } @else if (editingImageUrl) {
+        <p class="image-upload-meta">Using existing image.</p>
+      }
+
+      @if (imagePreviewUrl) {
+        <img [src]="imagePreviewUrl" alt="Menu preview" class="image-preview" />
+      }
+
+      @if (selectedImageFile) {
+        <button mat-stroked-button type="button" (click)="clearSelectedImage()">Remove selected image</button>
+      }
+    </div>
+
     <div class="toggle-row">
       <mat-slide-toggle formControlName="isAvailable">Available</mat-slide-toggle>
     </div>

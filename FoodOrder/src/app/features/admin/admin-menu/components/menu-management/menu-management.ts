@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,7 @@ import { MenuItemCard } from '../../../../menu/components/menu-item-card/menu-it
 import { MenuService } from '../../../../../core/services/menu-service';
 import { ToastService } from '../../../../../core/services/toast-service';
 import { MenuItem, MenuItemRequest } from '../../../../../models/menu.model';
+import { environment } from '../../../../../../environments/environment.development';
 
 @Component({
   selector: 'app-admin-menu-management',
@@ -26,16 +27,25 @@ import { MenuItem, MenuItemRequest } from '../../../../../models/menu.model';
   templateUrl: './menu-management.html',
   styleUrl: './menu-management.css',
 })
-export class AdminMenuManagement implements OnInit {
+export class AdminMenuManagement implements OnInit, OnDestroy {
   private readonly menuService = inject(MenuService);
   private readonly toastService = inject(ToastService);
   private readonly fb = inject(FormBuilder);
+  private static readonly MAX_IMAGE_SIZE_IN_BYTES = 5 * 1024 * 1024;
+  private static readonly ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg']);
+
+  @ViewChild('menuImageInput') menuImageInput?: ElementRef<HTMLInputElement>;
 
   loadingMenu = false;
   savingMenuItem = false;
   editingMenuItemId: string | null = null;
+  editingImageUrl: string | null = null;
   menuItems: MenuItem[] = [];
   readonly menuCategories = ['Fast Food', 'Pizza', 'Beverages', 'Dessert', 'Healthy'];
+  selectedImageFile: File | null = null;
+  selectedImageName = '';
+  imagePreviewUrl: string | null = null;
+  private selectedImageObjectUrl: string | null = null;
 
   readonly menuItemForm = this.fb.group({
     name: ['', [Validators.required]],
@@ -48,6 +58,10 @@ export class AdminMenuManagement implements OnInit {
 
   ngOnInit(): void {
     this.loadMenuItems();
+  }
+
+  ngOnDestroy(): void {
+    this.revokeSelectedImageObjectUrl();
   }
 
   loadMenuItems(): void {
@@ -79,7 +93,12 @@ export class AdminMenuManagement implements OnInit {
       price: Number(value.price ?? 0),
       stockQuantity: Number(value.stockQuantity ?? 0),
       isAvailable: !!value.isAvailable,
+      imageFile: this.selectedImageFile,
     };
+
+    if (this.editingMenuItemId && !this.selectedImageFile && this.editingImageUrl) {
+      request.imageUrl = this.editingImageUrl;
+    }
 
     const call = this.editingMenuItemId
       ? this.menuService.updateMenuItem(this.editingMenuItemId, request)
@@ -101,6 +120,12 @@ export class AdminMenuManagement implements OnInit {
 
   startEditMenuItem(item: MenuItem): void {
     this.editingMenuItemId = item.id;
+    this.editingImageUrl = item.imageUrl ?? null;
+    this.selectedImageFile = null;
+    this.selectedImageName = '';
+    this.setImagePreview(this.resolveImageUrl(item.imageUrl), false);
+    this.clearImageInput();
+
     this.menuItemForm.patchValue({
       name: item.name,
       description: item.description,
@@ -113,6 +138,12 @@ export class AdminMenuManagement implements OnInit {
 
   resetMenuForm(): void {
     this.editingMenuItemId = null;
+    this.editingImageUrl = null;
+    this.selectedImageFile = null;
+    this.selectedImageName = '';
+    this.setImagePreview(null, false);
+    this.clearImageInput();
+
     this.menuItemForm.reset({
       name: '',
       description: '',
@@ -121,6 +152,41 @@ export class AdminMenuManagement implements OnInit {
       stockQuantity: 0,
       isAvailable: true,
     });
+  }
+
+  onImageFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    if (!file) {
+      this.selectedImageFile = null;
+      this.selectedImageName = '';
+      this.setImagePreview(this.resolveImageUrl(this.editingImageUrl), false);
+      return;
+    }
+
+    if (!AdminMenuManagement.ALLOWED_IMAGE_TYPES.has(file.type)) {
+      this.toastService.error('Only .jpg, .jpeg and .png product images are allowed.');
+      this.clearImageInput();
+      return;
+    }
+
+    if (file.size > AdminMenuManagement.MAX_IMAGE_SIZE_IN_BYTES) {
+      this.toastService.error('Product image size must be less than or equal to 5 MB.');
+      this.clearImageInput();
+      return;
+    }
+
+    this.selectedImageFile = file;
+    this.selectedImageName = file.name;
+    this.setImagePreview(URL.createObjectURL(file), true);
+  }
+
+  clearSelectedImage(): void {
+    this.selectedImageFile = null;
+    this.selectedImageName = '';
+    this.setImagePreview(this.resolveImageUrl(this.editingImageUrl), false);
+    this.clearImageInput();
   }
 
   deleteMenuItem(item: MenuItem): void {
@@ -137,5 +203,39 @@ export class AdminMenuManagement implements OnInit {
         this.toastService.error('Unable to delete menu item.');
       },
     });
+  }
+
+  private setImagePreview(url: string | null, isObjectUrl: boolean): void {
+    this.revokeSelectedImageObjectUrl();
+
+    this.imagePreviewUrl = url;
+    if (isObjectUrl) {
+      this.selectedImageObjectUrl = url;
+    }
+  }
+
+  private resolveImageUrl(imageUrl?: string | null): string | null {
+    if (!imageUrl) {
+      return null;
+    }
+
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+
+    return `${environment.apiUrl.replace('/api', '')}${imageUrl}`;
+  }
+
+  private clearImageInput(): void {
+    if (this.menuImageInput?.nativeElement) {
+      this.menuImageInput.nativeElement.value = '';
+    }
+  }
+
+  private revokeSelectedImageObjectUrl(): void {
+    if (this.selectedImageObjectUrl) {
+      URL.revokeObjectURL(this.selectedImageObjectUrl);
+      this.selectedImageObjectUrl = null;
+    }
   }
 }
