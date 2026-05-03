@@ -50,6 +50,7 @@
 .dashboard-content {
 	min-width: 0;
 	overflow: hidden;
+	padding: 5px;
 }
 
 @media (max-width: 820px) {

@@ -10,11 +10,17 @@
     <mat-form-field appearance="outline">
       <mat-label>Name</mat-label>
       <input matInput formControlName="name" />
+      @if (menuItemForm.controls.name.touched && menuItemForm.controls.name.invalid) {
+        <mat-error>Name is required.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Description</mat-label>
       <textarea matInput formControlName="description" rows="3"></textarea>
+      @if (menuItemForm.controls.description.touched && menuItemForm.controls.description.invalid) {
+        <mat-error>Description is required.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -24,20 +30,36 @@
           <mat-option [value]="category">{{ category }}</mat-option>
         }
       </mat-select>
+      @if (menuItemForm.controls.category.touched && menuItemForm.controls.category.invalid) {
+        <mat-error>Category is required.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Price</mat-label>
       <input matInput type="number" min="1" formControlName="price" />
+      @if (menuItemForm.controls.price.touched && menuItemForm.controls.price.invalid) {
+        <mat-error>Enter a price of at least 1.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Stock Quantity</mat-label>
       <input matInput type="number" min="0" formControlName="stockQuantity" />
+      @if (menuItemForm.controls.stockQuantity.touched && menuItemForm.controls.stockQuantity.invalid) {
+        <mat-error>Stock quantity cannot be negative.</mat-error>
+      }
     </mat-form-field>
 
     <div class="image-upload-field">
       <label for="menu-image-input" class="image-upload-label">Menu Image (.jpg, .jpeg, .png, max 5 MB)</label>
+      <div class="image-preview-frame">
+        @if (imagePreviewUrl) {
+          <img [src]="imagePreviewUrl" alt="Menu preview" class="image-preview" />
+        } @else {
+          <div class="image-preview-placeholder">No image selected</div>
+        }
+      </div>
       <input
         #menuImageInput
         id="menu-image-input"
@@ -53,10 +75,6 @@
         <p class="image-upload-meta">Using existing image.</p>
       }
 
-      @if (imagePreviewUrl) {
-        <img [src]="imagePreviewUrl" alt="Menu preview" class="image-preview" />
-      }
-
       @if (selectedImageFile) {
         <button mat-stroked-button type="button" (click)="clearSelectedImage()">Remove selected image</button>
       }
@@ -67,7 +85,7 @@
     </div>
 
     <div class="menu-form-actions">
-      <button mat-raised-button color="primary" type="submit" [disabled]="savingMenuItem">
+      <button mat-raised-button color="primary" type="submit" [disabled]="savingMenuItem || menuItemForm.invalid">
         {{ savingMenuItem ? 'Saving...' : (editingMenuItemId ? 'Update Menu Item' : 'Create Menu Item') }}
       </button>
     </div>

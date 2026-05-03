@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,6 +11,7 @@ import { MenuService } from '../../../../../core/services/menu-service';
 import { ToastService } from '../../../../../core/services/toast-service';
 import { MenuItem, MenuItemRequest } from '../../../../../models/menu.model';
 import { environment } from '../../../../../../environments/environment.development';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-menu-management',
@@ -27,7 +28,7 @@ import { environment } from '../../../../../../environments/environment.developm
   templateUrl: './menu-management.html',
   styleUrl: './menu-management.css',
 })
-export class AdminMenuManagement implements OnInit, OnDestroy {
+export class AdminMenuManagement implements OnInit {
   private readonly menuService = inject(MenuService);
   private readonly toastService = inject(ToastService);
   private readonly fb = inject(FormBuilder);
@@ -58,10 +59,6 @@ export class AdminMenuManagement implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadMenuItems();
-  }
-
-  ngOnDestroy(): void {
-    this.revokeSelectedImageObjectUrl();
   }
 
   loadMenuItems(): void {
@@ -123,7 +120,7 @@ export class AdminMenuManagement implements OnInit, OnDestroy {
     this.editingImageUrl = item.imageUrl ?? null;
     this.selectedImageFile = null;
     this.selectedImageName = '';
-    this.setImagePreview(this.resolveImageUrl(item.imageUrl), false);
+    this.setImagePreview(this.resolveImageUrl(item.imageUrl));
     this.clearImageInput();
 
     this.menuItemForm.patchValue({
@@ -141,7 +138,7 @@ export class AdminMenuManagement implements OnInit, OnDestroy {
     this.editingImageUrl = null;
     this.selectedImageFile = null;
     this.selectedImageName = '';
-    this.setImagePreview(null, false);
+    this.setImagePreview(null);
     this.clearImageInput();
 
     this.menuItemForm.reset({
@@ -161,7 +158,7 @@ export class AdminMenuManagement implements OnInit, OnDestroy {
     if (!file) {
       this.selectedImageFile = null;
       this.selectedImageName = '';
-      this.setImagePreview(this.resolveImageUrl(this.editingImageUrl), false);
+      this.setImagePreview(this.resolveImageUrl(this.editingImageUrl));
       return;
     }
 
@@ -179,18 +176,32 @@ export class AdminMenuManagement implements OnInit, OnDestroy {
 
     this.selectedImageFile = file;
     this.selectedImageName = file.name;
-    this.setImagePreview(URL.createObjectURL(file), true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.setImagePreview(typeof reader.result === 'string' ? reader.result : null);
+    };
+    reader.readAsDataURL(file);
   }
 
   clearSelectedImage(): void {
     this.selectedImageFile = null;
     this.selectedImageName = '';
-    this.setImagePreview(this.resolveImageUrl(this.editingImageUrl), false);
+    this.setImagePreview(this.resolveImageUrl(this.editingImageUrl));
     this.clearImageInput();
   }
 
-  deleteMenuItem(item: MenuItem): void {
-    if (!window.confirm(`Delete ${item.name} from menu?`)) {
+  async deleteMenuItem(item: MenuItem): Promise<void> {
+    const result = await Swal.fire({
+      title: 'Delete menu item?',
+      text: `This will permanently remove ${item.name} from the menu.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#d33',
+    });
+
+    if (!result.isConfirmed) {
       return;
     }
 
@@ -205,13 +216,8 @@ export class AdminMenuManagement implements OnInit, OnDestroy {
     });
   }
 
-  private setImagePreview(url: string | null, isObjectUrl: boolean): void {
-    this.revokeSelectedImageObjectUrl();
-
+  private setImagePreview(url: string | null): void {
     this.imagePreviewUrl = url;
-    if (isObjectUrl) {
-      this.selectedImageObjectUrl = url;
-    }
   }
 
   private resolveImageUrl(imageUrl?: string | null): string | null {
@@ -229,13 +235,6 @@ export class AdminMenuManagement implements OnInit, OnDestroy {
   private clearImageInput(): void {
     if (this.menuImageInput?.nativeElement) {
       this.menuImageInput.nativeElement.value = '';
-    }
-  }
-
-  private revokeSelectedImageObjectUrl(): void {
-    if (this.selectedImageObjectUrl) {
-      URL.revokeObjectURL(this.selectedImageObjectUrl);
-      this.selectedImageObjectUrl = null;
     }
   }
 }

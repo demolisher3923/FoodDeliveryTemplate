@@ -44,6 +44,11 @@
   background: #fafcff;
 }
 
+.image-preview-frame {
+  width: 140px;
+  height: 100px;
+}
+
 .image-upload-label {
   font-size: 0.9rem;
   font-weight: 600;
@@ -66,6 +71,19 @@
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #d6dee6;
+}
+
+.image-preview-placeholder {
+  width: 140px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px dashed #d6dee6;
+  background: #fff;
+  color: #5f6e7f;
+  font-size: 0.84rem;
 }
 
 .menu-form-actions {
