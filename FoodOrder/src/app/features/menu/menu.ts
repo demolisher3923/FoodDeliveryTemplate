@@ -293,7 +293,6 @@ export class Menu implements OnDestroy {
       delivered: 'Delivered',
       cancelled: 'Cancelled',
     };
-
     return statuses[compressed] ?? value;
   }
 }

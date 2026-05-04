@@ -2,33 +2,19 @@ import { Injectable } from '@angular/core';
 import { AuthResponse } from '../../models/auth.model';
 
 const AUTH_KEY = 'food-order-auth';
-
-type StoredAuth = Omit<AuthResponse, 'token'> & { token: string };
+type JwtPayload = { exp?: number };
 
 @Injectable({
   providedIn: 'root',
 })
 export class TokenStorageService {
   setAuth(auth: AuthResponse): void {
-    const storedAuth: StoredAuth = {
-      userId: auth.userId,
-      fullName: auth.fullName,
-      email: auth.email,
-      role: auth.role,
-      profileUrl: auth.profileUrl ?? null,
-      token: auth.token,
-    };
-
-    sessionStorage.setItem(AUTH_KEY, JSON.stringify(storedAuth));
+    sessionStorage.setItem(AUTH_KEY, JSON.stringify(auth));
   }
 
-  getAuth(): StoredAuth | null {
+  getAuth(): AuthResponse | null {
     const data = sessionStorage.getItem(AUTH_KEY);
-    if (!data) {
-      return null;
-    }
-
-    return JSON.parse(data) as StoredAuth;
+    return data ? (JSON.parse(data) as AuthResponse) : null;
   }
 
   clear(): void {
@@ -36,48 +22,51 @@ export class TokenStorageService {
   }
 
   getToken(): string | null {
-    const auth = this.getAuth();
-    if (!auth) {
-      return null;
-    }
-
-    return auth.token;
+    return this.getAuth()?.token ?? null;
   }
 
   getTokenExpiration(): Date | null {
-    const token = this.getToken();
+    const expirationMs = this.getTokenExpirationMs();
+    if (expirationMs === null) {
+      return null;
+    }
+
+    return new Date(expirationMs);
+  }
+
+  isTokenExpired(): boolean {
+    const expirationMs = this.getTokenExpirationMs();
+    if (expirationMs === null) {
+      return true;
+    }
+
+    return expirationMs <= Date.now();
+  }
+
+  private getTokenExpirationMs(): number | null {
+    const payload = this.decodeTokenPayload(this.getToken());
+    if (typeof payload?.exp !== 'number') {
+      return null;
+    }
+
+    return payload.exp * 1000;
+  }
+
+  private decodeTokenPayload(token: string | null): JwtPayload | null {
     if (!token) {
       return null;
     }
 
-    const payload = this.decodeTokenPayload(token);
-    if (payload === null || typeof payload.exp !== 'number') {
+    const payloadPart = token.split('.')[1];
+    if (!payloadPart) {
       return null;
     }
 
-    return new Date(payload.exp * 1000);
-  }
-
-  isTokenExpired(): boolean {
-    const expiration = this.getTokenExpiration();
-    if (!expiration) {
-      return true;
-    }
-
-    return expiration.getTime() <= Date.now();
-  }
-
-  private decodeTokenPayload(token: string): { exp?: number } | null {
-    const parts = token.split('.');
-    if (parts.length < 2) {
-      return null;
-    }
-
-    const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    const paddedPayload = payload.padEnd(payload.length + ((4 - (payload.length % 4)) % 4), '=');
+    const base64 = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
+    const paddedBase64 = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
 
     try {
-      return JSON.parse(atob(paddedPayload)) as { exp?: number };
+      return JSON.parse(atob(paddedBase64)) as JwtPayload;
     } catch {
       return null;
     }
