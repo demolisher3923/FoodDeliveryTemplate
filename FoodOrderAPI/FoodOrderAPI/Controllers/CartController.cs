@@ -31,7 +31,7 @@ namespace FoodOrderAPI.Controllers
         }
 
         [HttpPut("items/{menuItemId:guid}")]
-        public async Task<ActionResult<IReadOnlyList<CartItemResponse>>> UpsertCartItem(Guid menuItemId, [FromBody] UpsertCartItemRequest request)
+        public async Task<ActionResult<IReadOnlyList<CartItemResponse>>> CreateOrUpdateCartItem(Guid menuItemId, [FromBody] UpsertCartItemRequest request)
         {
             if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
             {
@@ -40,7 +40,7 @@ namespace FoodOrderAPI.Controllers
 
             try
             {
-                var cartItems = await _cartService.UpsertCartItem(userId, menuItemId, request);
+                var cartItems = await _cartService.CreateOrUpdateCartItem(userId, menuItemId, request);
                 return Ok(cartItems);
             }
             catch (InvalidOperationException ex)

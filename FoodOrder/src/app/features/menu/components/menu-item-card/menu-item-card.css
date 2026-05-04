@@ -80,6 +80,13 @@
   border-radius: 10px;
 }
 
+.add-btn.out-of-stock,
+.add-btn.out-of-stock:disabled {
+  background-color: #d9534f !important;
+  color: #ffffff !important;
+  opacity: 1;
+}
+
 .admin-edit-btn{
   background-color: #ffc116;
   border-radius: 7px;

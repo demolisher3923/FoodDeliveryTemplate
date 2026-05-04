@@ -22,7 +22,7 @@ namespace BussinessLayer.Services
             return MapCartItems(cartItems);
         }
 
-        public async Task<IReadOnlyList<CartItemResponse>> UpsertCartItem(Guid userId, Guid menuItemId, UpsertCartItemRequest request)
+        public async Task<IReadOnlyList<CartItemResponse>> CreateOrUpdateCartItem(Guid userId, Guid menuItemId, UpsertCartItemRequest request)
         {
             if (request.Quantity < 1)
             {

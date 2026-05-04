@@ -36,4 +36,12 @@ export class MenuItemCard {
 
     return `${environment.apiUrl.replace('/api', '')}${imageUrl}`;
   }
+
+  get isOutOfStock(): boolean {
+    return !this.item.isAvailable || this.quantity > this.item.stockQuantity;
+  }
+
+  get canAddToCart(): boolean {
+    return !this.isOutOfStock && !this.isAdding;
+  }
 }
