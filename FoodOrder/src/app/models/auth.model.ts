@@ -24,5 +24,4 @@ export interface AuthResponse{
     role: 'Admin'|'User';
     profileUrl?: string | null;
     token: string;
-    expiresAt: string;
 }

@@ -20,6 +20,13 @@ export class AuthService {
     return this.authState();
   }
 
+  constructor() {
+    if (this.storage.isTokenExpired()) {
+      this.storage.clear();
+      this.authState.set(null);
+    }
+  }
+
   login(request: LoginRequest) {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/Auth/login`, request).pipe(tap((response) => this.setSession(response)));
   }
@@ -54,7 +61,7 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.authState();
+    return !!this.authState() && !this.storage.isTokenExpired();
   }
 
   hasRole(role: 'Admin' | 'User'): boolean {

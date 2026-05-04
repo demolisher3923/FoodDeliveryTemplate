@@ -15,7 +15,7 @@ namespace BussinessLayer.Services
         {
             _configuration = configuration;
         }
-        public string GenrateToken(User user, out DateTime expiresAt)
+        public string GenrateToken(User user)
         {
             var key = _configuration["Jwt:Key"];
             if (string.IsNullOrWhiteSpace(key))
@@ -33,7 +33,7 @@ namespace BussinessLayer.Services
                 expiryMinutes = parsedMinutes;
             }
 
-            expiresAt = DateTime.UtcNow.AddMinutes(expiryMinutes);
+            var expiresAt = DateTime.UtcNow.AddMinutes(expiryMinutes);
 
             var claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));

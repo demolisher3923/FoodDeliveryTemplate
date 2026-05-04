@@ -3,7 +3,6 @@ using DataAccessLayer.Dto.Common;
 using DataAccessLayer.Dto.Menu;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace FoodOrderAPI.Controllers
 {
@@ -80,8 +79,7 @@ namespace FoodOrderAPI.Controllers
         {
             try
             {
-                
-            await _menuService.DeleteMenuItem(id);
+                await _menuService.DeleteMenuItem(id);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
@@ -94,14 +92,9 @@ namespace FoodOrderAPI.Controllers
         [HttpPost("{menuItemId:guid}/order")]
         public async Task<ActionResult<OrderResponse>> PlaceOrder(Guid menuItemId, [FromBody] PlaceOrderRequest request)
         {
-            if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
-            {
-                return Unauthorized("Invalid user context.");
-            }
-
             try
             {
-                var response = await _menuService.PlaceOrder(menuItemId, userId, request);
+                var response = await _menuService.PlaceOrder(menuItemId, request);
                 return Ok(response);
             }
             catch (InvalidOperationException ex)
@@ -114,12 +107,7 @@ namespace FoodOrderAPI.Controllers
         [HttpGet("my-orders")]
         public async Task<ActionResult<IReadOnlyList<OrderResponse>>> GetMyOrders()
         {
-            if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
-            {
-                return Unauthorized("Invalid user type.");
-            }
-
-            var orders = await _menuService.GetMyOrders(userId);
+            var orders = await _menuService.GetMyOrders();
             return Ok(orders);
         }
 
@@ -143,8 +131,7 @@ namespace FoodOrderAPI.Controllers
         {
             try
             {
-
-            var order = await _menuService.UpdateOrderStatus(orderId, request.Status);
+                var order = await _menuService.UpdateOrderStatus(orderId, request.Status);
                 return Ok(order);
             }
             catch (KeyNotFoundException ex)

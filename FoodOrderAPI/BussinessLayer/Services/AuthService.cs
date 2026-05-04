@@ -45,9 +45,9 @@ namespace BussinessLayer.Services
             await _userRepository.Add(user);
             await _userRepository.SaveChanges();
 
-            var token = _tokenGenratorService.GenrateToken(user, out var expiresAt);
+            var token = _tokenGenratorService.GenrateToken(user);
 
-            return CreateAuthResponse(user, token, expiresAt);
+            return CreateAuthResponse(user, token);
         }
 
         public async Task<AuthResponse> Login(LoginRequest request, CancellationToken cancellationToken = default)
@@ -66,12 +66,12 @@ namespace BussinessLayer.Services
                 throw new UnauthorizedAccessException("Invalid email or password.");
             }
 
-            var token = _tokenGenratorService.GenrateToken(user, out var expiresAt);
+            var token = _tokenGenratorService.GenrateToken(user);
 
-            return CreateAuthResponse(user, token, expiresAt);
+            return CreateAuthResponse(user, token);
         }
 
-        private static AuthResponse CreateAuthResponse(User user, string token, DateTime expiresAt)
+        private static AuthResponse CreateAuthResponse(User user, string token)
         {
             return new AuthResponse
             {
@@ -80,8 +80,7 @@ namespace BussinessLayer.Services
                 Email = user.Email,
                 Role = user.Role,
                 ProfileUrl = user.ProfileUrl,
-                Token = token,
-                ExpiresAt = expiresAt
+                Token = token
             };
         }
     }

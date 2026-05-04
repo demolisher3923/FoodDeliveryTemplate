@@ -55,7 +55,7 @@ namespace BussinessLayer.Services
                 StockQuantity = request.StockQuantity,
                 IsAvailable = request.IsAvailable && request.StockQuantity > 0,
                 ImageUrl = request.ImageUrl,
-                CreatedBy = _currentUserService.Email
+                CreatedBy = _currentUserService.Email ?? "system"
             };
 
             await _menuRepository.AddMenuItem(menuItem);
@@ -121,12 +121,20 @@ namespace BussinessLayer.Services
             await _menuRepository.SaveChanges();
         }
 
-        public async Task<OrderResponse> PlaceOrder(Guid menuItemId, Guid userId, PlaceOrderRequest request)
+        public async Task<OrderResponse> PlaceOrder(Guid menuItemId, PlaceOrderRequest request)
         {
             if (request.Quantity < 1)
             {
                 throw new InvalidOperationException("Quantity must be at least 1.");
             }
+
+            var currentUserId = _currentUserService.UserId;
+            if (currentUserId is null)
+            {
+                throw new InvalidOperationException("Invalid user context.");
+            }
+
+            var userId = currentUserId.Value;
 
             var menuItem = await _menuRepository.GetActiveMenuItemById(menuItemId);
             if (menuItem is null || !menuItem.IsAvailable)
@@ -181,8 +189,15 @@ namespace BussinessLayer.Services
             };
         }
 
-        public async Task<IReadOnlyList<OrderResponse>> GetMyOrders(Guid userId)
+        public async Task<IReadOnlyList<OrderResponse>> GetMyOrders()
         {
+            var currentUserId = _currentUserService.UserId;
+            if (currentUserId is null)
+            {
+                throw new InvalidOperationException("Invalid user context.");
+            }
+
+            var userId = currentUserId.Value;
             var orders = await _menuRepository.GetActiveOrdersByUser(userId);
 
             var response = new List<OrderResponse>();

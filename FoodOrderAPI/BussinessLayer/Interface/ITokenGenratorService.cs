@@ -7,6 +7,6 @@ namespace BussinessLayer.Interface
 {
     public interface ITokenGenratorService
     {
-        string GenrateToken(User user, out DateTime expiresAt);
+        string GenrateToken(User user);
     }
 }

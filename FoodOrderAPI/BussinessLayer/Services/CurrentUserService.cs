@@ -13,6 +13,15 @@ namespace BussinessLayer.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string? Email => _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email).Value;
+        public string? Email => _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value;
+
+        public Guid? UserId
+        {
+            get
+            {
+                var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
+            }
+        }
     }
 }
