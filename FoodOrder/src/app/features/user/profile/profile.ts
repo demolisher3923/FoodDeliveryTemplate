@@ -11,6 +11,8 @@ import { UserService } from '../../../core/services/user-service';
 import { AuthService } from '../../../core/services/auth-service';
 import { environment } from '../../../../environments/environment.development';
 import { ToastService } from '../../../core/services/toast-service';
+import { Router } from '@angular/router';
+const VALID_CHARACTERS = /^[a-zA-Z\s\-,']+$/;
 
 @Component({
   selector: 'app-profile',
@@ -27,6 +29,7 @@ import { ToastService } from '../../../core/services/toast-service';
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
+
 export class Profile {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
@@ -43,18 +46,18 @@ export class Profile {
   imageError = '';
   selectedProfileImage: File | null = null;
   profileImagePreview: string | null = null;
-
+  
   readonly form = this.fb.group({
-    fullName: ['', [Validators.required]],
+    fullName: ['', [Validators.required,Validators.pattern(VALID_CHARACTERS)]],
     mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-    address: ['', [Validators.required, Validators.minLength(8)]],
+    address: ['', [Validators.required, Validators.minLength(8), Validators.pattern(VALID_CHARACTERS)]],
     gender: ['', [Validators.required]],
     interests: this.fb.array(this.interestsList.map(() => this.fb.control(false))),
     preferredContactMethod: ['Email', [Validators.required]],
     profileUrl: [''],
   });
 
-  constructor() {
+  constructor(private readonly router : Router) {
     this.loadProfile();
   }
 
@@ -139,6 +142,8 @@ export class Profile {
           this.toastService.error(this.errorMessage);
         },
       });
+
+      this.router.navigate(['/menu']);
   }
 
   private loadProfile() {
@@ -173,7 +178,6 @@ export class Profile {
     if (profileUrl.startsWith('http')) {
       return profileUrl;
     }
-
     const apiHost = environment.apiUrl.replace('/api', '');
     return `${apiHost}${profileUrl}`;
   }

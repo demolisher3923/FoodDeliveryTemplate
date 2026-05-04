@@ -62,7 +62,7 @@ export class MenuService {
     return this.http.get<CartItem[]>(`${environment.apiUrl}/Cart`);
   }
 
-  upsertCartItem(menuItemId: string, request: UpsertCartItemRequest) {
+  insertUpdateCartItems(menuItemId: string, request: UpsertCartItemRequest) {
     return this.http.put<CartItem[]>(`${environment.apiUrl}/Cart/items/${menuItemId}`, request);
   }
 
@@ -90,7 +90,7 @@ export class MenuService {
     if (request.imageFile) {
       formData.append('imageFile', request.imageFile);
     }
-
+    
     return formData;
   }
 }

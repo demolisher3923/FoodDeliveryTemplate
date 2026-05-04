@@ -6,7 +6,9 @@
   <h3>{{ item.name }}</h3>
   <p class="description">{{ item.description }}</p>
   <p class="meta">Category: {{ item.category }}</p>
-  <p class="meta">Stock: {{ item.stockQuantity }}</p>
+   @if (isAdmin) {
+     <p class="meta">Stock: {{ item.stockQuantity }}</p>
+   }
   <p class="price">₹{{ item.price }}</p>
   <p class="availability" [class.unavailable]="!item.isAvailable">
     {{ item.isAvailable ? 'Available' : 'Out of Stock' }}
@@ -14,8 +16,8 @@
 
   @if (isAdmin) {
     <div class="admin-actions">
-      <button mat-stroked-button color="primary" (click)="edit.emit(item)">Edit</button>
-      <button mat-stroked-button color="warn" (click)="remove.emit(item)">Delete</button>
+      <button mat-stroked-button class="admin-edit-btn" (click)="edit.emit(item)">Edit</button>
+      <button mat-stroked-button class="admin-delete-btn" (click)="remove.emit(item)">Delete</button>
     </div>
   }
 
@@ -26,7 +28,7 @@
         <span class="qty-value">{{ quantity }}</span>
         <button type="button" class="qty-btn" (click)="increment.emit(item.id)">+</button>
       </div>
-      <button mat-raised-button color="accent" [disabled]="!item.isAvailable || isAdding" (click)="addToCart.emit(item)">
+      <button mat-raised-button class="add-btn" [disabled]="!item.isAvailable || isAdding" (click)="addToCart.emit(item)">
         {{ isAdding ? 'Adding...' : 'Add to cart' }}
       </button>
     </div>

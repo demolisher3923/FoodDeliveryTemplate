@@ -15,6 +15,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ToastService } from '../../../core/services/toast-service';
 
 const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+const VALID_CHARACTERS = /^[a-zA-Z\s\-,']+$/;
 @Component({
   selector: 'app-register',
   imports: [
@@ -44,12 +45,12 @@ export class Register {
   hideConfirmPassword = true;
 
   readonly form = this.fb.group({
-    fullName:['',[Validators.required]],
+    fullName:['',[Validators.required,Validators.pattern(VALID_CHARACTERS)]],
     email:['',[Validators.required,Validators.email]],
     password:['',[Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
     confirmPassword:['',[Validators.required]],
     mobileNumber:['',[Validators.required,Validators.pattern(/^\d{10}$/)]],
-    address:['',[Validators.required, Validators.minLength(8)]],
+    address:['',[Validators.required, Validators.minLength(8), Validators.pattern(VALID_CHARACTERS)]],
     profileUrl:[''],
     gender:['',[Validators.required]],
     interests:this.fb.array(this.interstsList.map(() => this.fb.control(false))),
@@ -87,7 +88,6 @@ export class Register {
     this.imageError = '';
     this.selectedProfileImage = file;
     this.form.patchValue({profileUrl:file.name});
-
 
     const reader = new FileReader();
     reader.onload = () =>{

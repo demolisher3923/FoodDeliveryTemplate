@@ -1,70 +1,51 @@
-
 <section class="menu-page">
-		<div class="heading">
-			<h2>Food Menu</h2>
-			<p>Explore dishes, place orders, and manage menu items with role-based access.</p>
-		</div>
-
-		<div class="menu-layout">
-			@if (isUser()) {
-				<aside class="user-sidenav">
-					<h3>User Panel</h3>
-					<button type="button" [class.active]="activeUserSection === 'menu'" (click)="setActiveUserSection('menu')">Menu</button>
-					<button type="button" [class.active]="activeUserSection === 'cart'" (click)="setActiveUserSection('cart')">Cart</button>
-					<button type="button" [class.active]="activeUserSection === 'orders'" (click)="setActiveUserSection('orders')">My Orders</button>
-				</aside>
-			}
-
-			<div class="menu-content">
-
-		@if (errorMessage) {
-			<p class="error">{{ errorMessage }}</p>
-		}
-		@if (message) {
-			<p class="success">{{ message }}</p>
+	<div class="menu-layout">
+		@if (isUser()) {
+		<aside class="user-sidenav">
+			<h3>User Panel</h3>
+			<button type="button" [class.active]="activeUserSection === 'menu'"
+				(click)="setActiveUserSection('menu')">Menu</button>
+			<button type="button" [class.active]="activeUserSection === 'cart'"
+				(click)="setActiveUserSection('cart')">Cart</button>
+			<button type="button" [class.active]="activeUserSection === 'orders'"
+				(click)="setActiveUserSection('orders')">My Orders</button>
+		</aside>
 		}
 
-		@if (isAdmin()) {
+		<div class="menu-content">
+
+
+			@if (isAdmin()) {
 			<app-admin-menu-management></app-admin-menu-management>
-		}
-
-		@if (isUser() && activeUserSection === 'menu') {
-			@if (loading) {
-				<p>Loading menu...</p>
-			} @else {
-				<div class="menu-grid" id="menu-grid-section">
-					@for (item of menuItems; track item.id) {
-						<app-menu-item-card
-							[item]="item"
-							[isAdmin]="isAdmin()"
-							[isUser]="isUser()"
-							[quantity]="itemQuantities[item.id]"
-							[isAdding]="orderLoadingId === item.id"
-							(decrement)="decrementQuantity($event)"
-							(increment)="incrementQuantity($event)"
-							(addToCart)="placeOrder($event)">
-						</app-menu-item-card>
-					}
-				</div>
 			}
-		}
 
-		@if (isUser() && activeUserSection === 'cart') {
-			<app-user-cart
-				[cartItems]="cartItems"
-				[cartTotal]="cartTotal"
-				[isCheckingOut]="orderLoadingId === 'checkout'"
-				(itemRemoved)="removeCartItem($event)"
+			@if (isUser() && activeUserSection === 'menu') {
+			@if (loading) {
+			<p>Loading menu...</p>
+			} @else {
+			<div class="menu-grid" id="menu-grid-section">
+				@for (item of menuItems; track item.id) {
+				<app-menu-item-card [item]="item" [isAdmin]="isAdmin()" [isUser]="isUser()"
+					[quantity]="itemQuantities[item.id]" [isAdding]="orderLoadingId === item.id"
+					(decrement)="decrementQuantity($event)" (increment)="incrementQuantity($event)"
+					(addToCart)="placeOrder($event)">
+				</app-menu-item-card>
+				}
+			</div>
+			}
+			}
+
+			@if (isUser() && activeUserSection === 'cart') {
+			<app-user-cart [cartItems]="cartItems" [cartTotal]="cartTotal"
+				[isCheckingOut]="orderLoadingId === 'checkout'" (itemRemoved)="removeCartItem($event)"
 				(checkoutClicked)="checkout()">
 			</app-user-cart>
-    }
+			}
 
-		@if (isUser() && activeUserSection === 'orders') {
-			<app-user-orders
-				[myOrders]="myOrders"
-				(refreshClicked)="loadMyOrders()">
+			@if (isUser() && activeUserSection === 'orders') {
+			<app-user-orders [myOrders]="myOrders" (refreshClicked)="loadMyOrders()">
 			</app-user-orders>
-		}
-			</div>
+			}
 		</div>
+	</div>
 </section>

@@ -24,6 +24,7 @@ import { AdminMenuManagement } from '../admin/admin-menu/components/menu-managem
   templateUrl: './menu.html',
   styleUrl: './menu.css',
 })
+
 export class Menu implements OnDestroy {
   private static readonly ORDERS_UPDATED_EVENT_KEY = 'food-order-orders-updated-at';
   private ordersRefreshTimer: ReturnType<typeof setInterval> | null = null;
@@ -115,7 +116,7 @@ export class Menu implements OnDestroy {
       next: (orders) => {
         this.myOrders = orders.map((order) => ({
           ...order,
-          status: this.toCanonicalStatus(order.status),
+          status: this.toStandardStatus(order.status),
         }));
       },
       error: () => {
@@ -151,7 +152,7 @@ export class Menu implements OnDestroy {
     const nextQuantity = (existing?.quantity ?? 0) + quantity;
 
     this.orderLoadingId = item.id;
-    this.menuService.upsertCartItem(item.id, { quantity: nextQuantity }).subscribe({
+    this.menuService.insertUpdateCartItems(item.id, { quantity: nextQuantity }).subscribe({
       next: (cartItems) => {
         this.orderLoadingId = null;
         this.setCartItems(cartItems);
@@ -281,7 +282,7 @@ export class Menu implements OnDestroy {
     }, 5000);
   }
 
-  private toCanonicalStatus(status: string): string {
+  private toStandardStatus(status: string): string {
     const value = (status ?? '').trim();
     const compressed = value.replace(/[^a-z0-9]/gi, '').toLowerCase();
     const statuses: Record<string, string> = {
@@ -296,3 +297,4 @@ export class Menu implements OnDestroy {
     return statuses[compressed] ?? value;
   }
 }
+ 

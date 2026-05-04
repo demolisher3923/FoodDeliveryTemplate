@@ -10,7 +10,7 @@ export class UserService {
   private readonly http = inject(HttpClient);
 
   getMe() {
-    return this.http.get<UserProfile>(`${environment.apiUrl}/User/me`);
+    return this.http.get<UserProfile>(`${environment.apiUrl}/User/profile`);
   }
 
   updateMe(request: UpdateUserProfileRequest) {
@@ -29,7 +29,7 @@ export class UserService {
       formData.append('profileImage', request.profileImage);
     }
 
-    return this.http.put<UserProfile>(`${environment.apiUrl}/User/me`, formData);
+    return this.http.put<UserProfile>(`${environment.apiUrl}/User/profile`, formData);
   }
 
   getUsers(request: PaginationRequest) {
@@ -42,7 +42,7 @@ export class UserService {
     if (request.search?.trim()) {
       params = params.set('search', request.search.trim());
     }
-
+    
     return this.http.get<PaginationResponse<AdminUserListItem>>(`${environment.apiUrl}/User`, { params });
   }
 }

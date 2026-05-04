@@ -1,15 +1,15 @@
 <mat-card class="users-card" id="users-section">
+  <h2>Users</h2>
   <div class="users-header">
-    <h3>Users</h3>
     <form [formGroup]="searchForm" class="search-row" (ngSubmit)="applySearch()">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Search user</mat-label>
         <input matInput formControlName="search" placeholder="name, email or mobile" />
       </mat-form-field>
-      <button mat-raised-button color="primary" type="submit">Search</button>
+      <button matButton="outlined" color="primary" type="submit">Search</button>
       <button mat-button type="button" (click)="clearSearch()">Clear</button>
       <label class="table-size">
-        <span>Page Size</span>
+        <span>Page Size </span>
         <select [value]="pageSize" (change)="onPageSizeChange($any($event.target).value)">
           @for (size of pageSizeOptions; track size) {
             <option [value]="size">{{ size }}</option>

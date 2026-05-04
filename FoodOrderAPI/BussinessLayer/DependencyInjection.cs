@@ -12,6 +12,7 @@ namespace BussinessLayer
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IPasswordHashService, PasswordHashService>();
             services.AddScoped<ITokenGenratorService, JwtTokenGenrator>();
         }

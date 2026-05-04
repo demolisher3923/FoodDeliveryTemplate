@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { Chart } from 'chart.js/auto';
+import { AdminOrderResponse } from '../../../../../models/menu.model';
+import Chart from 'chart.js/auto';
 import { MenuService } from '../../../../../core/services/menu-service';
 import { UserService } from '../../../../../core/services/user-service';
-import { AdminOrderResponse } from '../../../../../models/menu.model';
 
 @Component({
   selector: 'app-admin-dashboard-panel',
@@ -42,35 +42,35 @@ export class AdminDashboardPanel implements AfterViewInit, OnInit, OnDestroy {
     this.ordersChart?.destroy();
   }
 
-  private loadStats(): void {
+  private loadStats():void {
     this.menuService.getAdminOrders().subscribe({
-      next: (orders) => {
+      next:(orders) => {
         this.orders = orders.map((order) => ({
           ...order,
-          status: this.normalizeStatus(order.status),
+          status: this.normalizeStatus(order.status)
         }));
         this.updateTodayStats();
         this.renderCharts();
-      },
+      }
     });
 
     this.userService
-      .getUsers({
-        pageNumber: 1,
-        pageSize: 8,
-        sortBy: 'createdAt',
-        sortDirection: 'desc',
-      })
-      .subscribe({
-        next: (response) => {
-          this.activeUsersCount = response.items.filter((x) => x.isActive).length;
-          this.renderCharts();
-        },
-      });
+    .getUsers({
+      pageNumber: 1,
+      pageSize: 8,
+      sortBy: 'createdAt',
+      sortDirection: 'desc'
+    })
+    .subscribe({
+      next:(response) => {
+        this.activeUsersCount = response.items.filter((x) => x.isActive).length;
+        this.renderCharts();
+      }
+    })
   }
 
   private renderCharts(): void {
-    if (!this.viewReady || !this.kpiChartRef || !this.ordersChartRef) {
+    if ( !this.viewReady ||!this.kpiChartRef || !this.ordersChartRef) {
       return;
     }
 
@@ -122,14 +122,6 @@ export class AdminDashboardPanel implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  private updateTodayStats(): void {
-    const today = new Date();
-    this.todaysOrdersCount = this.orders.filter((x) => this.isToday(new Date(x.createdAt), today)).length;
-    this.todaysRevenue = this.orders
-      .filter((x) => this.isToday(new Date(x.createdAt), today) && x.status !== 'Cancelled')
-      .reduce((sum, x) => sum + x.totalPrice, 0);
-  }
-
   private normalizeStatus(status: string): string {
     const trimmed = (status ?? '').trim();
     const normalizedKey = trimmed.replace(/[^a-z0-9]/gi, '').toLowerCase();
@@ -141,9 +133,17 @@ export class AdminDashboardPanel implements AfterViewInit, OnInit, OnDestroy {
     return match ?? trimmed;
   }
 
-  private isToday(value: Date, today: Date): boolean {
+  private updateTodayStats(): void {
+    const today = new Date();
+    this.todaysOrdersCount = this.orders.filter((x) => this.isToday(new Date(x.createdAt), today)).length;
+    this.todaysRevenue = this.orders
+    .filter((x)=> this.isToday(new Date(x.createdAt), today) && x.status !== 'Cancelled')
+    .reduce((sum,x) => sum + x.totalPrice, 0);
+  }
+
+  private isToday(value:Date, today:Date):boolean{
     return value.getFullYear() === today.getFullYear()
-      && value.getMonth() === today.getMonth()
-      && value.getDate() === today.getDate();
+    && value.getMonth() === today.getMonth()
+    && value.getDate() === today.getDate();
   }
 }

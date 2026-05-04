@@ -1,18 +1,18 @@
 <mat-card class="users-card" id="orders-section">
+  <h2>Orders</h2>
   <div class="users-header">
-    <h3>Orders</h3>
     <form [formGroup]="orderSearchForm" class="search-row" (ngSubmit)="applyOrderSearch()">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Search order</mat-label>
         <input matInput formControlName="search" placeholder="user, email, item or status" />
       </mat-form-field>
-      <button mat-raised-button color="primary" type="submit">Search</button>
+      <button matButton="outlined" color="primary" type="submit">Search</button>
       <button mat-button type="button" (click)="clearOrderSearch()">Clear</button>
     </form>
 
     <div class="orders-actions">
       <label class="table-size">
-        <span>Page Size</span>
+        <span>Page Size </span>
         <select [value]="ordersPageSize" (change)="onOrdersPageSizeChange($any($event.target).value)">
           @for (size of pageSizeOptions; track size) {
             <option [value]="size">{{ size }}</option>
@@ -22,7 +22,7 @@
       <button mat-stroked-button color="primary" (click)="loadOrdersPage()">Refresh Orders</button>
     </div>
   </div>
-
+  
   @if (loadingOrders) {
     <p>Loading orders...</p>
   } @else {

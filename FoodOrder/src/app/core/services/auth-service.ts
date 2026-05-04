@@ -71,7 +71,7 @@ export class AuthService {
     if (!current) {
       return;
     }
-
+    
     const updated: AuthResponse = {
       ...current,
       fullName: profile.fullName,

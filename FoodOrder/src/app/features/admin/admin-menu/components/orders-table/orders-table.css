@@ -1,6 +1,6 @@
 .users-card {
-  margin-top: 16px;
   padding: 14px;
+  background-color: white;
 }
 
 .users-header {
@@ -18,7 +18,7 @@
 
 .search-row {
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   flex-wrap: wrap;
   gap: 8px;
   flex: 1 1 560px;
@@ -73,7 +73,7 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  font-weight: 700;
+  font-weight:800;
   padding: 0;
 }
 

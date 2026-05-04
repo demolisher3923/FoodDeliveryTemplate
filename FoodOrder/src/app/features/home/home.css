@@ -2,10 +2,11 @@
   min-height: calc(90vh);
   display: grid;
   place-items: center;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(255, 245, 224, 0.35), transparent 38%),
-    radial-gradient(circle at 80% 70%, rgba(100, 239, 255, 0.45), transparent 36%),
-    #111827;
+  background-image:
+    linear-gradient(rgba(8, 16, 32, 0.74), rgba(8, 16, 32, 0.52)),
+    url('../../../assets/images/homeBg.jpg');
+    background-size: cover ;
+    background-repeat: no-repeat;
   padding: 2rem;
 }
 
@@ -16,13 +17,16 @@
 }
 
 h1 {
-  font-size: 3.5rem;
-  margin-bottom: 1rem;
+  font-size: 4.5rem;
+  margin-bottom: 2rem;
 }
 
 p {
   opacity: 0.92;
   line-height: 1.6;
+}
+.tagline{
+  font-size: 1.2rem;
 }
 
 .actions {
@@ -101,7 +105,7 @@ p {
 }
 
 .process-section {
-  background: linear-gradient(90deg, #f2f7ff, #eefbf7);
+  background: linear-gradient(90deg, #c3daff, #d3eee6);
   border-radius: 18px;
 }
 

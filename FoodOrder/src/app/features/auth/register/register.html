@@ -39,9 +39,7 @@
                 </button>
                 @if(form.controls.confirmPassword.touched && (form.controls.confirmPassword.invalid ||
                 passwordMismatch)){
-                <mat-error>
-                    Confirm password is required and must match with password.
-                </mat-error>
+                <mat-error>Confirm password must match with password.</mat-error>
                 }
             </mat-form-field>
 
@@ -68,7 +66,7 @@
             <mat-label>Address</mat-label>
             <textarea matInput row="2" formControlName="address"></textarea>
             @if(form.controls.address.touched && form.controls.address.invalid){
-            <mat-error>Address is required and atleast of 8 character</mat-error>
+            <mat-error>Address is required and must be atleast of 8 character</mat-error>
             }
         </mat-form-field>
 
@@ -80,7 +78,6 @@
                 } @else {
                 <div class="profile-placeholder">No Image</div>
                 }
-
                 <input type="file" (change)="onProfileImageChange($event)" accept=".png,.jpg,.jpeg" />
                 @if (imageError) {
                 <p class="error">{{ imageError }}</p>

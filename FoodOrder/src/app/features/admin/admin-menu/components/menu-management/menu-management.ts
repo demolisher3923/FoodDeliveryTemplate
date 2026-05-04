@@ -12,6 +12,7 @@ import { ToastService } from '../../../../../core/services/toast-service';
 import { MenuItem, MenuItemRequest } from '../../../../../models/menu.model';
 import { environment } from '../../../../../../environments/environment.development';
 import Swal from 'sweetalert2';
+const VALID_CHARACTERS = /^[a-zA-Z\s\-,.']+$/;
 
 @Component({
   selector: 'app-admin-menu-management',
@@ -46,11 +47,10 @@ export class AdminMenuManagement implements OnInit {
   selectedImageFile: File | null = null;
   selectedImageName = '';
   imagePreviewUrl: string | null = null;
-  private selectedImageObjectUrl: string | null = null;
 
   readonly menuItemForm = this.fb.group({
-    name: ['', [Validators.required]],
-    description: ['', [Validators.required]],
+    name: ['', [Validators.required, Validators.pattern(VALID_CHARACTERS)]],
+    description: ['', [Validators.required, Validators.pattern(VALID_CHARACTERS)]],
     category: ['', [Validators.required]],
     price: [0, [Validators.required, Validators.min(1)]],
     stockQuantity: [0, [Validators.required, Validators.min(0)]],

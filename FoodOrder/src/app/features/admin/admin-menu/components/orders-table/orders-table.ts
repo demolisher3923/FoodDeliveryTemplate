@@ -1,14 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { AdminOrderResponse } from '../../../../../models/menu.model';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ToastService } from '../../../../../core/services/toast-service';
 import { MenuService } from '../../../../../core/services/menu-service';
-import { AdminOrderResponse } from '../../../../../models/menu.model';
+import { ToastService } from '../../../../../core/services/toast-service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-orders-table',
@@ -16,9 +16,9 @@ import { AdminOrderResponse } from '../../../../../models/menu.model';
   templateUrl: './orders-table.html',
   styleUrl: './orders-table.css',
 })
-export class AdminOrdersTable implements OnInit {
-  private static readonly STATUS_DRAFTS_STORAGE_KEY = 'food-order-admin-status-drafts';
-  private static readonly ORDERS_UPDATED_EVENT_KEY = 'food-order-orders-updated-at';
+export class AdminOrdersTable implements OnInit{
+  private static readonly STATUS_DRAFT_KEY = 'food-order-admin-status-drafts';
+  private static readonly ORDERS_UPDATED_KEY = 'food-order-orders-updated-at';
   private readonly fb = inject(FormBuilder);
   private readonly menuService = inject(MenuService);
   private readonly toastService = inject(ToastService);
@@ -28,8 +28,8 @@ export class AdminOrdersTable implements OnInit {
   orders: AdminOrderResponse[] = [];
   pagedOrders: AdminOrderResponse[] = [];
   ordersCount = 0;
-  ordersPageNumber = 1;
-  ordersPageSize = 8;
+  ordersPageNumber = 1; 
+  ordersPageSize = 5;
   ordersTotalPages = 0;
   ordersSortBy = 'createdAt';
   ordersSortDirection: 'asc' | 'desc' = 'desc';
@@ -153,12 +153,12 @@ export class AdminOrdersTable implements OnInit {
     if (!this.orderStatusOptions.includes(status)) {
       this.orderStatusDrafts[order.orderId] = currentStatus;
       this.saveDraftsToStorage();
-      this.toastService.error('Selected status is invalid. Please choose a valid status.');
+      this.toastService.error('Invalid status! Please choose a valid status.');
       return;
     }
 
     if (status === currentStatus) {
-      this.toastService.success('Status is unchanged.');
+      this.toastService.success('Unchanged status.');
       return;
     }
 
@@ -171,10 +171,10 @@ export class AdminOrdersTable implements OnInit {
         this.pagedOrders = this.pagedOrders.map((x) => (x.orderId === normalizedOrder.orderId ? normalizedOrder : x));
         this.orderStatusDrafts[normalizedOrder.orderId] = normalizedOrder.status;
         this.saveDraftsToStorage();
-        localStorage.setItem(AdminOrdersTable.ORDERS_UPDATED_EVENT_KEY, Date.now().toString());
+        localStorage.setItem(AdminOrdersTable.ORDERS_UPDATED_KEY, Date.now().toString());
         this.loadOrders();
         this.loadOrdersPage();
-        this.toastService.success('Order status updated.');
+        this.toastService.success('Status updated.');
       },
       error: (error: HttpErrorResponse) => {
         this.updatingOrderId = null;
@@ -183,7 +183,7 @@ export class AdminOrdersTable implements OnInit {
       },
     });
   }
-
+  
   onStatusDraftChange(orderId: string, status: string): void {
     this.orderStatusDrafts[orderId] = this.normalizeStatus(status);
     this.saveDraftsToStorage();
@@ -235,7 +235,7 @@ export class AdminOrdersTable implements OnInit {
   }
 
   private loadDraftsFromStorage(): void {
-    const raw = localStorage.getItem(AdminOrdersTable.STATUS_DRAFTS_STORAGE_KEY);
+    const raw = localStorage.getItem(AdminOrdersTable.STATUS_DRAFT_KEY);
     if (!raw) {
       return;
     }
@@ -249,12 +249,12 @@ export class AdminOrdersTable implements OnInit {
         }
       }
     } catch {
-      localStorage.removeItem(AdminOrdersTable.STATUS_DRAFTS_STORAGE_KEY);
+      localStorage.removeItem(AdminOrdersTable.STATUS_DRAFT_KEY);
     }
   }
 
   private saveDraftsToStorage(): void {
-    localStorage.setItem(AdminOrdersTable.STATUS_DRAFTS_STORAGE_KEY, JSON.stringify(this.orderStatusDrafts));
+    localStorage.setItem(AdminOrdersTable.STATUS_DRAFT_KEY, JSON.stringify(this.orderStatusDrafts));
   }
 
   private normalizeStatus(status: string): string {

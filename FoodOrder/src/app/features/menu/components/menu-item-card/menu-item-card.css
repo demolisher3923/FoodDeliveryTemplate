@@ -1,5 +1,7 @@
 .menu-card {
-  border-radius: 14px;
+  border-radius: 12px;
+  padding: 7px;
+  background-color: white;
 }
 
 .dish-image {
@@ -7,7 +9,7 @@
   height: 180px;
   object-fit: cover;
   border-radius: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 
 .description {
@@ -16,18 +18,21 @@
 
 .meta {
   font-size: 0.85rem;
-  color: #516073;
+  color: #666f7a;
   margin: 4px 0;
 }
 
 .price {
   font-weight: 700;
+  font-size: 1.2rem;
   margin-top: 8px;
+  margin-bottom: 0;
 }
 
 .availability {
   font-size: 0.85rem;
   color: #198754;
+  margin-bottom: 0;
 }
 
 .unavailable {
@@ -68,3 +73,24 @@
   width: 34px;
   text-align: center;
 }
+
+.add-btn{
+  background-color: #198754;
+  color: white;
+  border-radius: 10px;
+}
+
+.admin-edit-btn{
+  background-color: #ffc116;
+  border-radius: 7px;
+  color: #000000;
+  border: none;
+
+}
+.admin-delete-btn{
+  background-color: #cf1212;
+  border-radius: 7px;
+  color: #ffffff;
+  border: none;
+}
+

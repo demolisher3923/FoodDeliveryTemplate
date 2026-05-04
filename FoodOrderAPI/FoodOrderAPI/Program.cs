@@ -25,6 +25,7 @@ namespace FoodOrderAPI
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddBussinessServices();
             builder.Services.AddDataAccessServices();
 

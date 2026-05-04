@@ -1,12 +1,12 @@
 .users-card {
-  margin-top: 16px;
   padding: 14px;
+  background-color: white;
 }
 
 .users-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 10px;
@@ -18,7 +18,7 @@
 
 .search-row {
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   flex-wrap: wrap;
   gap: 8px;
   flex: 1 1 560px;
@@ -30,7 +30,7 @@
 }
 
 .table-size {
-  display: inline-flex;
+  /* display: inline-flex; */
   align-items: center;
   gap: 6px;
   font-size: 0.86rem;
@@ -65,7 +65,7 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 800;
   padding: 0;
 }
 

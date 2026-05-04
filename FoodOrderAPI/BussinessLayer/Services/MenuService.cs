@@ -10,12 +10,15 @@ namespace BussinessLayer.Services
     {
         private readonly IMenuRepository _menuRepository;
         private readonly ICartRepository _cartRepository;
+        private readonly ICurrentUserService _currentUserService;
+
         private static readonly string[] AllowedOrderStatuses = new[] { "Placed", "Confirmed", "Preparing", "OutForDelivery", "Delivered", "Cancelled" };
 
-        public MenuService(IMenuRepository menuRepository, ICartRepository cartRepository)
+        public MenuService(IMenuRepository menuRepository, ICartRepository cartRepository, ICurrentUserService currentUserService)
         {
             _menuRepository = menuRepository;
             _cartRepository = cartRepository;
+            _currentUserService = currentUserService;
         }
 
         public async Task<IReadOnlyList<MenuItemResponse>> GetMenu()
@@ -41,7 +44,7 @@ namespace BussinessLayer.Services
             return response;
         }
 
-        public async Task<MenuItemResponse> CreateMenuItem(MenuItemRequest request, string createdBy)
+        public async Task<MenuItemResponse> CreateMenuItem(MenuItemRequest request)
         {
             var menuItem = new MenuItem
             {
@@ -52,7 +55,7 @@ namespace BussinessLayer.Services
                 StockQuantity = request.StockQuantity,
                 IsAvailable = request.IsAvailable && request.StockQuantity > 0,
                 ImageUrl = request.ImageUrl,
-                CreatedBy = createdBy
+                CreatedBy = _currentUserService.Email
             };
 
             await _menuRepository.AddMenuItem(menuItem);
@@ -71,7 +74,7 @@ namespace BussinessLayer.Services
             };
         }
 
-        public async Task<MenuItemResponse> UpdateMenuItem(Guid id, MenuItemRequest request, string updatedBy)
+        public async Task<MenuItemResponse> UpdateMenuItem(Guid id, MenuItemRequest request)
         {
             var menuItem = await _menuRepository.GetActiveMenuItemById(id);
             if (menuItem is null)
@@ -87,7 +90,7 @@ namespace BussinessLayer.Services
             menuItem.IsAvailable = request.IsAvailable && request.StockQuantity > 0;
             menuItem.ImageUrl = request.ImageUrl;
             menuItem.UpdatedAt = DateTime.UtcNow;
-            menuItem.UpdatedBy = updatedBy;
+            menuItem.UpdatedBy = _currentUserService.Email;
 
             await _menuRepository.SaveChanges();
             return new MenuItemResponse
@@ -103,7 +106,7 @@ namespace BussinessLayer.Services
             };
         }
 
-        public async Task DeleteMenuItem(Guid id, string updatedBy)
+        public async Task DeleteMenuItem(Guid id)
         {
             var menuItem = await _menuRepository.GetActiveMenuItemById(id);
             if (menuItem is null)
@@ -114,7 +117,7 @@ namespace BussinessLayer.Services
             menuItem.IsActive = false;
             menuItem.IsAvailable = false;
             menuItem.UpdatedAt = DateTime.UtcNow;
-            menuItem.UpdatedBy = updatedBy;
+            menuItem.UpdatedBy = _currentUserService.Email;
             await _menuRepository.SaveChanges();
         }
 
@@ -232,7 +235,7 @@ namespace BussinessLayer.Services
             return _menuRepository.GetPagedActiveOrders(request);
         }
 
-        public async Task<AdminOrderResponse> UpdateOrderStatus(Guid orderId, string status, string updatedBy)
+        public async Task<AdminOrderResponse> UpdateOrderStatus(Guid orderId, string status)
         {
             var normalizedStatus = status?.Trim();
             var isValidStatus = false;
@@ -265,7 +268,7 @@ namespace BussinessLayer.Services
 
             order.Status = finalStatus;
             order.UpdatedAt = DateTime.UtcNow;
-            order.UpdatedBy = updatedBy;
+            order.UpdatedBy = _currentUserService.Email;
             await _menuRepository.SaveChanges();
 
             return new AdminOrderResponse

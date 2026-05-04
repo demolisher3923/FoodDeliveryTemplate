@@ -4,16 +4,14 @@
   <div class="spacer"></div>
 
   @if (!isLoggedIn()) {
-    <a mat-button routerLink="/menu">Menu</a>
-    <a mat-button routerLink="/login">Login</a>
+    <a mat-button class="link" routerLink="/login">Login</a>
     <a mat-raised-button color="primary" routerLink="/register">Register</a>
   } @else {
     @if (isAdmin()) {
-      <button mat-button (click)="goToDashboard()">Dashboard</button>
-
+      <button mat-button class="link" (click)="goToDashboard()">Dashboard</button>
     }
     @if (isUser()) {
-      <a mat-button routerLink="/menu">Browse Menu</a>
+      <a mat-button class="link" routerLink="/menu">Menu</a>
     }
     @if (isUser()) {
       <button class="cart-chip" type="button" (click)="openCart()">Cart: {{ cartCount() }}</button>

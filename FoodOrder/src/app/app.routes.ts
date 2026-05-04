@@ -7,7 +7,7 @@ import { Profile } from './features/user/profile/profile';
 import { authGuard } from './core/guards/auth-guard';
 import { roleGuard } from './core/guards/role-guard';
 import { AdminMenu } from './features/admin/admin-menu/admin-menu';
-import { NotFound } from './features/not-found/not-found';
+import { Notfound } from './features/notfound/notfound';
 
 export const routes: Routes = [
     {path: '', component:Home},
@@ -32,5 +32,5 @@ export const routes: Routes = [
 		canActivate: [authGuard, roleGuard],
 		data: { role: 'Admin' }
 	},
-    { path: '**', component: NotFound }
+    { path: '**', component: Notfound }
 ];

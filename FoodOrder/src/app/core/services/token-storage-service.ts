@@ -8,11 +8,11 @@ const AUTH_KEY = 'food-order-auth';
 })
 export class TokenStorageService {
   setAuth(auth: AuthResponse): void {
-    localStorage.setItem(AUTH_KEY, JSON.stringify(auth));
+    sessionStorage.setItem(AUTH_KEY, JSON.stringify(auth));
   }
 
   getAuth(): AuthResponse | null {
-    const data = localStorage.getItem(AUTH_KEY);
+    const data = sessionStorage.getItem(AUTH_KEY);
     if (!data) {
       return null;
     }
@@ -21,7 +21,7 @@ export class TokenStorageService {
   }
 
   clear(): void {
-    localStorage.removeItem(AUTH_KEY);
+    sessionStorage.removeItem(AUTH_KEY);
   }
 
   getToken(): string | null {

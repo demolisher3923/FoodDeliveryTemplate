@@ -21,11 +21,10 @@
                     <mat-error>Password is required</mat-error>
                     }
                 </mat-form-field>
-
+                
                 <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
                     {{ loading ? 'Signing in...' : 'Login' }}
                 </button>
-
             </form>
             <p>
                 New User ? <a routerLink="/register"> Create account</a>

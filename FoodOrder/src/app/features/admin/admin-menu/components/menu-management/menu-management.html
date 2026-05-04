@@ -39,7 +39,7 @@
       <mat-label>Price</mat-label>
       <input matInput type="number" min="1" formControlName="price" />
       @if (menuItemForm.controls.price.touched && menuItemForm.controls.price.invalid) {
-        <mat-error>Enter a price of at least 1.</mat-error>
+        <mat-error>Price is required</mat-error>
       }
     </mat-form-field>
 

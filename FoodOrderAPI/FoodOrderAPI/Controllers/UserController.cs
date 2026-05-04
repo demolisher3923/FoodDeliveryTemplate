@@ -31,7 +31,7 @@ namespace FoodOrderAPI.Controllers
             return Ok(users);
         }
 
-        [HttpGet("me")]
+        [HttpGet("profile")]
         public async Task<ActionResult<UserProfileResponse>> GetMe()
         {
             var userId = GetCurrentUserId();
@@ -39,7 +39,7 @@ namespace FoodOrderAPI.Controllers
             return Ok(profile);
         }
 
-        [HttpPut("me")]
+        [HttpPut("profile")]
         public async Task<ActionResult<UserProfileResponse>> UpdateMe([FromForm] UserProfileUpdateRequest request)
         {
             var userId = GetCurrentUserId();

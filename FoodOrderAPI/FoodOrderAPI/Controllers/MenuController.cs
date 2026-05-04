@@ -44,8 +44,7 @@ namespace FoodOrderAPI.Controllers
                 request.ImageUrl = await SaveProductImage(request.ImageFile);
             }
 
-            var createdBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
-            var created = await _menuService.CreateMenuItem(request, createdBy);
+            var created = await _menuService.CreateMenuItem(request);
             return Ok(created);
         }
 
@@ -66,8 +65,7 @@ namespace FoodOrderAPI.Controllers
                     request.ImageUrl = await SaveProductImage(request.ImageFile);
                 }
 
-                var updatedBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
-                var updated = await _menuService.UpdateMenuItem(id, request, updatedBy);
+                var updated = await _menuService.UpdateMenuItem(id, request);
                 return Ok(updated);
             }
             catch (KeyNotFoundException ex)
@@ -82,8 +80,8 @@ namespace FoodOrderAPI.Controllers
         {
             try
             {
-                var updatedBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
-            await _menuService.DeleteMenuItem(id, updatedBy);
+                
+            await _menuService.DeleteMenuItem(id);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
@@ -118,7 +116,7 @@ namespace FoodOrderAPI.Controllers
         {
             if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
             {
-                return Unauthorized("Invalid user context.");
+                return Unauthorized("Invalid user type.");
             }
 
             var orders = await _menuService.GetMyOrders(userId);
@@ -145,8 +143,8 @@ namespace FoodOrderAPI.Controllers
         {
             try
             {
-                var updatedBy = User.FindFirstValue(ClaimTypes.Email) ?? "admin";
-            var order = await _menuService.UpdateOrderStatus(orderId, request.Status, updatedBy);
+
+            var order = await _menuService.UpdateOrderStatus(orderId, request.Status);
                 return Ok(order);
             }
             catch (KeyNotFoundException ex)
