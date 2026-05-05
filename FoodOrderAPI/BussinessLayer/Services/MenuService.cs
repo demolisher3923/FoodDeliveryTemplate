@@ -219,32 +219,6 @@ namespace BussinessLayer.Services
             return response;
         }
 
-        public async Task<IReadOnlyList<AdminOrderResponse>> GetAllOrders()
-        {
-            var orders = await _menuRepository.GetAllActiveOrders();
-
-            var response = new List<AdminOrderResponse>();
-            foreach (var order in orders)
-            {
-                response.Add(new AdminOrderResponse
-                {
-                    OrderId = order.Id,
-                    UserId = order.UserId,
-                    UserName = order.User.FullName,
-                    UserEmail = order.User.Email,
-                    MenuItemId = order.MenuItemId,
-                    MenuItemName = order.MenuItem.Name,
-                    Quantity = order.Quantity,
-                    UnitPrice = order.UnitPrice,
-                    TotalPrice = order.TotalPrice,
-                    Status = order.Status,
-                    CreatedAt = order.CreatedAt
-                });
-            }
-
-            return response;
-        }
-
         public Task<PaginationResponse<AdminOrderResponse>> GetPagedOrders(PaginationRequest request)
         {
             return _menuRepository.GetPagedActiveOrders(request);

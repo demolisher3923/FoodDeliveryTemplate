@@ -41,10 +41,6 @@ export class MenuService {
     return this.http.get<OrderResponse[]>(`${environment.apiUrl}/Menu/my-orders`);
   }
 
-  getAdminOrders() {
-    return this.http.get<AdminOrderResponse[]>(`${environment.apiUrl}/Menu/admin-orders`);
-  }
-
   getPagedAdminOrders(request: PaginationRequest) {
     return this.http.get<PaginationResponse<AdminOrderResponse>>(`${environment.apiUrl}/Menu/admin-orders`, {
       params: {

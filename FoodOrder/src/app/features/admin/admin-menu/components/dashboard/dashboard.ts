@@ -43,9 +43,14 @@ export class AdminDashboardPanel implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private loadStats():void {
-    this.menuService.getAdminOrders().subscribe({
-      next:(orders) => {
-        this.orders = orders.map((order) => ({
+    this.menuService.getPagedAdminOrders({
+      pageNumber: 1,
+      pageSize: 100,
+      sortBy: 'createdAt',
+      sortDirection: 'desc',
+    }).subscribe({
+      next:(response) => {
+        this.orders = response.items.map((order) => ({
           ...order,
           status: this.normalizeStatus(order.status)
         }));

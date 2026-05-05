@@ -25,7 +25,6 @@ export class AdminOrdersTable implements OnInit{
 
   loadingOrders = false;
   updatingOrderId: string | null = null;
-  orders: AdminOrderResponse[] = [];
   pagedOrders: AdminOrderResponse[] = [];
   ordersCount = 0;
   ordersPageNumber = 1; 
@@ -43,26 +42,7 @@ export class AdminOrdersTable implements OnInit{
 
   ngOnInit(): void {
     this.loadDraftsFromStorage();
-    this.loadOrders();
     this.loadOrdersPage();
-  }
-
-  loadOrders(): void {
-    this.loadingOrders = true;
-    this.menuService.getAdminOrders().subscribe({
-      next: (response) => {
-        this.loadingOrders = false;
-        this.orders = response.map((order) => ({
-          ...order,
-          status: this.normalizeStatus(order.status),
-        }));
-        this.syncDraftsWithOrders();
-      },
-      error: () => {
-        this.loadingOrders = false;
-        this.toastService.error('Unable to load orders list.');
-      },
-    });
   }
 
   loadOrdersPage(): void {
@@ -146,7 +126,7 @@ export class AdminOrdersTable implements OnInit{
   }
 
   updateOrderStatus(order: AdminOrderResponse): void {
-    const currentOrder = this.orders.find((x) => x.orderId === order.orderId) ?? order;
+    const currentOrder = this.pagedOrders.find((x) => x.orderId === order.orderId) ?? order;
     const currentStatus = this.normalizeStatus(currentOrder.status);
     const status = this.normalizeStatus(this.orderStatusDrafts[order.orderId] ?? currentStatus);
 
@@ -167,12 +147,10 @@ export class AdminOrdersTable implements OnInit{
       next: (updatedOrder) => {
         this.updatingOrderId = null;
         const normalizedOrder = { ...updatedOrder, status: this.normalizeStatus(updatedOrder.status) };
-        this.orders = this.orders.map((x) => (x.orderId === normalizedOrder.orderId ? normalizedOrder : x));
         this.pagedOrders = this.pagedOrders.map((x) => (x.orderId === normalizedOrder.orderId ? normalizedOrder : x));
         this.orderStatusDrafts[normalizedOrder.orderId] = normalizedOrder.status;
         this.saveDraftsToStorage();
         localStorage.setItem(AdminOrdersTable.ORDERS_UPDATED_KEY, Date.now().toString());
-        this.loadOrders();
         this.loadOrdersPage();
         this.toastService.success('Status updated.');
       },
@@ -217,21 +195,6 @@ export class AdminOrdersTable implements OnInit{
     }
 
     return 'status-chip placed';
-  }
-
-  private syncDraftsWithOrders(): void {
-    const activeOrderIds = new Set(this.orders.map((x) => x.orderId));
-    for (const orderId of Object.keys(this.orderStatusDrafts)) {
-      if (!activeOrderIds.has(orderId)) {
-        delete this.orderStatusDrafts[orderId];
-      }
-    }
-
-    for (const order of this.orders) {
-      this.orderStatusDrafts[order.orderId] = order.status;
-    }
-
-    this.saveDraftsToStorage();
   }
 
   private loadDraftsFromStorage(): void {
