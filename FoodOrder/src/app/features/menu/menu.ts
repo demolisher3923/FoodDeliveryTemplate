@@ -38,6 +38,7 @@ export class Menu implements OnDestroy {
   readonly isUser = computed(() => this.authService.hasRole('User'));
   loading = false;
   orderLoadingId: string | null = null;
+  cartUpdatingItemId: string | null = null;
 
   message = '';
   errorMessage = '';
@@ -169,12 +170,41 @@ export class Menu implements OnDestroy {
   }
 
   removeCartItem(menuItemId: string): void {
+    this.cartUpdatingItemId = menuItemId;
     this.menuService.removeCartItem(menuItemId).subscribe({
       next: (cartItems) => {
+        this.cartUpdatingItemId = null;
         this.setCartItems(cartItems);
       },
-      error: () => {
-        this.toastService.error('Unable to remove item from cart.');
+      error: (error) => {
+        this.cartUpdatingItemId = null;
+        const message = this.extractApiErrorMessage(error) ?? 'Unable to remove item from cart.';
+        this.toastService.error(message);
+      },
+    });
+  }
+
+  updateCartItemQuantity(menuItemId: string, delta: number): void {
+    const cartItem = this.cartItems.find((item) => item.menuItemId === menuItemId);
+    if (!cartItem) {
+      return;
+    }
+
+    const nextQuantity = cartItem.quantity + delta;
+    if (nextQuantity < 1) {
+      return;
+    }
+
+    this.cartUpdatingItemId = menuItemId;
+    this.menuService.insertUpdateCartItems(menuItemId, { quantity: nextQuantity }).subscribe({
+      next: (cartItems) => {
+        this.cartUpdatingItemId = null;
+        this.setCartItems(cartItems);
+      },
+      error: (error) => {
+        this.cartUpdatingItemId = null;
+        const message = this.extractApiErrorMessage(error) ?? 'Unable to update cart.';
+        this.toastService.error(message);
       },
     });
   }

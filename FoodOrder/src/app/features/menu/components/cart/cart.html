@@ -6,7 +6,17 @@
     <div class="orders-list">
       @for (item of cartItems; track item.menuItemId) {
         <div class="order-item">
-          <span>{{ item.menuItemName }} x {{ item.quantity }}</span>
+          <div class="cart-item-details">
+            <span class="cart-item-name">{{ item.menuItemName }}</span>
+            <div class="qty-counter">
+              <button type="button" class="qty-btn"
+                [disabled]="item.quantity <= 1 || updatingCartItemId === item.menuItemId"
+                (click)="quantityDecremented.emit(item.menuItemId)">-</button>
+              <span class="qty-value">{{ item.quantity }}</span>
+              <button type="button" class="qty-btn" [disabled]="updatingCartItemId === item.menuItemId"
+                (click)="quantityIncremented.emit(item.menuItemId)">+</button>
+            </div>
+          </div>
           <div class="cart-actions">
             <span>₹{{ item.totalPrice }}</span>
             <button mat-button color="warn" type="button" (click)="itemRemoved.emit(item.menuItemId)">Remove</button>

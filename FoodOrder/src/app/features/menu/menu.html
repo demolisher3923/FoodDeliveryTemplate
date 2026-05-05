@@ -36,8 +36,9 @@
 
 			@if (isUser() && activeUserSection === 'cart') {
 			<app-user-cart [cartItems]="cartItems" [cartTotal]="cartTotal"
-				[isCheckingOut]="orderLoadingId === 'checkout'" (itemRemoved)="removeCartItem($event)"
-				(checkoutClicked)="checkout()">
+				[isCheckingOut]="orderLoadingId === 'checkout'" [updatingCartItemId]="cartUpdatingItemId"
+				(itemRemoved)="removeCartItem($event)" (quantityIncremented)="updateCartItemQuantity($event, 1)"
+				(quantityDecremented)="updateCartItemQuantity($event, -1)" (checkoutClicked)="checkout()">
 			</app-user-cart>
 			}
 

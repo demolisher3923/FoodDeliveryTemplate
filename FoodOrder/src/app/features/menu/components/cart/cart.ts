@@ -14,7 +14,10 @@ export class UserCart {
   @Input() cartItems: CartItem[] = [];
   @Input() cartTotal = 0;
   @Input() isCheckingOut = false;
+  @Input() updatingCartItemId: string | null = null;
 
   @Output() itemRemoved = new EventEmitter<string>();
+  @Output() quantityIncremented = new EventEmitter<string>();
+  @Output() quantityDecremented = new EventEmitter<string>();
   @Output() checkoutClicked = new EventEmitter<void>();
 }
