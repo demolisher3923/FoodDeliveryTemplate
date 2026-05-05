@@ -29,7 +29,7 @@
         <button type="button" class="qty-btn" (click)="increment.emit(item.id)">+</button>
       </div>
       <button mat-raised-button class="add-btn" [class.out-of-stock]="isOutOfStock"
-        [disabled]="!canAddToCart" (click)="addToCart.emit(item)">
+        [disabled]="!canAddToCart " (click)="addToCart.emit(item)">
         {{ isOutOfStock ? 'Out of stock' : isAdding ? 'Adding...' : 'Add to cart' }}
       </button>
     </div>

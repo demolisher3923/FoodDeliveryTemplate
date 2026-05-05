@@ -13,7 +13,8 @@
                 [disabled]="item.quantity <= 1 || updatingCartItemId === item.menuItemId"
                 (click)="quantityDecremented.emit(item.menuItemId)">-</button>
               <span class="qty-value">{{ item.quantity }}</span>
-              <button type="button" class="qty-btn" [disabled]="updatingCartItemId === item.menuItemId"
+              <button type="button" class="qty-btn"
+                [disabled]="item.quantity >= item.stockQuantity || updatingCartItemId === item.menuItemId"
                 (click)="quantityIncremented.emit(item.menuItemId)">+</button>
             </div>
           </div>

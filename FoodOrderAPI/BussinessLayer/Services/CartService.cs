@@ -90,6 +90,7 @@ namespace BussinessLayer.Services
                     MenuItemId = item.MenuItemId,
                     MenuItemName = item.MenuItem.Name,
                     Quantity = item.Quantity,
+                    StockQuantity = item.MenuItem.StockQuantity,
                     UnitPrice = item.UnitPrice,
                     TotalPrice = item.UnitPrice * item.Quantity
                 });

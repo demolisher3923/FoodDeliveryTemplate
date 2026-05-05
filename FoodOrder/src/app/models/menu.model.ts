@@ -40,6 +40,7 @@ export interface CartItem {
   menuItemName: string;
   unitPrice: number;
   quantity: number;
+  stockQuantity: number;
   totalPrice: number;
 }
 
